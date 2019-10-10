@@ -1,22 +1,119 @@
+
 .App {
   text-align: center;
+  overflow: hidden;
+  height: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
+.Users{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%)
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+.red{
+  color: red;
+}
+
+.bold{
+  font-weight: bold;
+}
+
+.div2 {
+  float: left;
+  position: relative;
+  width: 47%;
+  height: 100%;
+  background-color: #1C0B4F;
+  z-index: -2;
+}
+.div3 {
+  float: left;
+  position: relative;
+  width: 23%;
+  height: 100%;
+  background-color: #120935;
+  z-index: -3;
+}
+.div1 {
+  float: left;
+  position: relative;
+  width: 30%;
+  height: 100%;
+  background-color: #2F1982;
+  box-shadow: 2px 0px 2px 0px #101010;
+  z-index: -1;
+}
+.center_box{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.heading{
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: #9B9B9B;
+  z-index: 1;
+  
+}
+.title{
+  margin-top: 2px;
+  text-align: center;
+  font-size: 20px;
+  color: #ffffff;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.item {
+  position: relative;
+  width: 300px;
+  height: 100px;
+  pointer-events: auto;
+  transform-origin: 50% 50% 0px;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-sizing: border-box;
+  display: grid;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 0px 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
-.App-link {
-  color: #09d3ac;
+.fg {
+  cursor: -webkit-grab;
+  background-color: #272727;
+  color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  align-items: center;
+  text-align: center;
+  border-radius: 5px;
+  box-shadow: 0px 10px 30px -5px rgba(0, 0, 0, 0.2);
+  font-size: 3em;
+
+  font-weight: 600;
+  transition: box-shadow 0.75s;
+}
+
+.fg:active {
+  cursor: -webkit-grabbing;
+  box-shadow: 0px 15px 30px -5px rgba(0, 0, 0, 0.4);
+}
+
+.fg > * {
+  pointer-events: none;
+}
+
+.av {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
 }
