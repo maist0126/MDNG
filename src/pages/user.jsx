@@ -132,11 +132,11 @@ function MyUser(propps) {
         }
 
         if (propps.radius === 2){
-            set({ width: '90px', height: '90px'});
-        } else if (propps.radius === 1){
             set({ width: '60px', height: '60px'});
+        } else if (propps.radius === 1){
+            set({ width: '40px', height: '40px'});
         } else if (propps.radius === 0){
-            set({ width: '75px', height: '75px'});
+            set({ width: '50px', height: '50px'});
         }
     });
 
@@ -456,6 +456,10 @@ class UserPage extends React.Component {
                     </div>
                     <div className = "title">
                         {this.state.topic}
+                    </div>
+                    <div>
+                        <textarea rows="1" cols="33"> </textarea>
+
                     </div>
                 </div>
                 <div className = "div1" onClick={this.add}>
