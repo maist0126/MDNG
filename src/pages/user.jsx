@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {useSpring, animated} from 'react-spring';
 import "./user.css"
 import fire from './fire';
+import Sketch from "react-p5";
 
 
 
@@ -39,76 +40,6 @@ function getQueryStringObject() {
     return b;
 }
 
-class CanvasComponent extends React.Component {
-    componentDidMount() {
-        this.updateCanvas();
-    }
-    componentDidUpdate() {
-        this.updateCanvas();
-    }
-    updateCanvas() {
-        const ctx = this.refs.canvas.getContext('2d');
-        let cw = undefined;
-        const start = Math.PI*3/2;
-        const r = cw/2;
-        const strokeWeight = r;
-        const remainSec = 60;
-        fire.database().ref().child('rem_time').on('value', snapshot => {
-            if (snapshot.val().time > 0){
-                let minutes = Math.floor((snapshot.val().time % (60 * 60)) / 60);
-                let seconds = Math.floor(snapshot.val().time % 60);
-                let m = minutes + ":" + seconds ; 
-                // if (seconds < 15){
-                //     document.getElementById("user_blue_time").innerHTML = m;   
-                // } else{
-                //     document.getElementById("user_blue_time").innerHTML = ""; 
-                // }
-                // document.getElementById("user_blue_time").style.color = '#ffffff';
-        
-                let diff = ((snapshot.val().time/remainSec)*Math.PI*2*10).toFixed(2);
-                if (ctx !== undefined){
-                    ctx.clearRect(0,0,cw,cw);
-                    ctx.lineWidth = strokeWeight;
-                    ctx.fillStyle = "#09F";
-                    ctx.strokeStyle = "#09F";
-                    ctx.beginPath();
-                    ctx.arc(r, r, r - strokeWeight/2, start, diff/10+start, false);
-                    ctx.stroke();
-                }
-                
-            } else {
-                let red_indicator = snapshot.val().time * (-1);
-                let minutes = Math.floor((red_indicator % (60 * 60)) / 60);
-                let seconds = Math.floor(red_indicator % 60);
-                let m = "- " + minutes + ":" + seconds; 
-                // document.getElementById("user_blue_time").innerHTML = m;
-                // document.getElementById("user_blue_time").style.color = '#ff0000';
-        
-                let diff = ((red_indicator/remainSec)*Math.PI*2*10).toFixed(2);
-                if (ctx !== undefined){
-                    ctx.clearRect(0,0,cw,cw);
-                    ctx.lineWidth = strokeWeight;
-                    ctx.fillStyle = "#09F";
-                    ctx.strokeStyle = "#09F";
-                    ctx.beginPath();
-                    ctx.arc(r, r, r - strokeWeight/2, start, diff/10+start, false);
-                    ctx.stroke();
-                }
-            }
-        });
-    }
-    render() {
-         return (
-             <canvas ref="canvas" style ={{
-                position: 'absolute',
-                top: '50%',
-                left: '15%',
-                transform: 'translate(-50%,-50%)'
-             }}width={300} height={300}/>
-         );
-    }
-}
-
 function MyUser(propps) {
     const [props, set] = useSpring(() => ({
         top: propps.top,
@@ -131,12 +62,12 @@ function MyUser(propps) {
             set({ top: '50%' , left: '15%'});
         }
 
-        if (propps.radius === 2){
-            set({ width: '60px', height: '60px'});
-        } else if (propps.radius === 1){
-            set({ width: '40px', height: '40px'});
-        } else if (propps.radius === 0){
-            set({ width: '50px', height: '50px'});
+        if (propps.radius === 5){
+            set({ width: '5rem', height: '5rem'});
+        } else if (propps.radius === 3){
+            set({ width: '3rem', height: '3rem'});
+        } else if (propps.radius === 4){
+            set({ width: '4rem', height: '4rem'});
         }
     });
 
@@ -163,15 +94,27 @@ class UserPage extends React.Component {
             reserve_done: false,
             full: false,
             t_full: false,
-            now_id: undefined,
+            now_id: 0,
             now: false,
-            reservers: []
+            reservers: [],
+            runtime: undefined
         }
     }
-    componentDidMount() {
-    }
-
     componentWillMount() {
+        fire.database().ref().child('mst_time').once('value').then(snapshot => {
+            let time = 3600 - snapshot.val().time;
+            let minutes = Math.floor((time % (60 * 60)) / 60);
+            let seconds = Math.floor(time % 60);
+            let m = minutes + ":" + seconds ;
+            this.setState({ runtime: m });
+        });
+        fire.database().ref().child('mst_time').on('value', snapshot => {
+            let time = 3600 - snapshot.val().time;
+            let minutes = Math.floor((time % (60 * 60)) / 60);
+            let seconds = Math.floor(time % 60);
+            let m = minutes + ":" + seconds ;
+            this.setState({ runtime: m });
+        });
         fire.database().ref().child('topic').once('value').then(snapshot => {
             this.setState({ topic: snapshot.val() });
         });
@@ -189,17 +132,22 @@ class UserPage extends React.Component {
                     color: snapshot.val()[key].color,
                     time: snapshot.val()[key].time,
                     state: 0,
-                    radius: 0
+                    radius: 4
                 });
             }
             speech_mean = (speech_mean/userTable.length).toFixed(2);
             let high_mean = speech_mean*2;
             let low_mean = speech_mean*0.5;
             for (let i = 0; i<userTable.length; i++){
+                userTable[i].radius = 0;
                 if (userTable[i].time > high_mean){
-                    userTable[i].radius = 2;
+                    if(userTable[i].time != 0){
+                        userTable[i].radius = 5;
+                    }
                 } else if (userTable[i].time < low_mean){
-                    userTable[i].radius = 1;
+                    if(userTable[i].time != 0){
+                        userTable[i].radius = 3;
+                    }
                 }
             }
             this.setState({ users: userTable });
@@ -215,7 +163,7 @@ class UserPage extends React.Component {
                     color: snapshot.val()[key].color,
                     time: snapshot.val()[key].time,
                     state: 0,
-                    radius: 0
+                    radius: 4
                 });
             }
             speech_mean = (speech_mean/userTable.length).toFixed(2);
@@ -223,9 +171,9 @@ class UserPage extends React.Component {
             let low_mean = speech_mean*0.5;
             for (let i = 0; i<userTable.length; i++){
                 if (userTable[i].time > high_mean){
-                    userTable[i].radius = 2;
+                    userTable[i].radius = 5;
                 } else if (userTable[i].time < low_mean){
-                    userTable[i].radius = 1;
+                    userTable[i].radius = 3;
                 }
             }
             this.setState({ users: userTable });
@@ -441,6 +389,46 @@ class UserPage extends React.Component {
             
         }
     }
+    setup = (p5, parent) => {
+        p5.createCanvas(140, 140).parent(parent)
+    }
+    draw = p5 => {
+        fire.database().ref().child('rem_time').on('value', snapshot => {
+            if (snapshot.val().time > 0){
+                let minutes = Math.floor((snapshot.val().time % (60 * 60)) / 60);
+                let seconds = Math.floor(snapshot.val().time % 60);
+                let m = minutes + ":" + seconds ; 
+                // if (seconds < 15){
+                //     document.getElementById("user_blue_time").innerHTML = m;   
+                // } else{
+                //     document.getElementById("user_blue_time").innerHTML = ""; 
+                // }
+                // document.getElementById("user_blue_time").style.color = '#ffffff';
+        
+                let diff = ((snapshot.val().time/60)*Math.PI*2*10).toFixed(2);
+                p5.background(47,25,130);
+                p5.fill(0,153,255);
+                p5.strokeWeight(1);
+                p5.stroke(0,153,255);
+                p5.arc(70, 70, 140, 140, -Math.PI*0.5, diff/10-Math.PI*0.5);
+                
+            } else {
+                let red_indicator = snapshot.val().time * (-1);
+                let minutes = Math.floor((red_indicator % (60 * 60)) / 60);
+                let seconds = Math.floor(red_indicator % 60);
+                let m = "- " + minutes + ":" + seconds; 
+                // document.getElementById("user_blue_time").innerHTML = m;
+                // document.getElementById("user_blue_time").style.color = '#ff0000';
+        
+                let diff = ((red_indicator/60)*Math.PI*2*10).toFixed(2);
+                p5.background(47,25,130);
+                p5.fill(255,0,0);
+                p5.strokeWeight(1);
+                p5.stroke(0,153,255);
+                p5.arc(70, 70, 140, 140, -Math.PI*0.5, diff/10-Math.PI*0.5);
+            }
+        });
+    }
 
     render(){
         const userTable = this.state.users;
@@ -457,9 +445,11 @@ class UserPage extends React.Component {
                     <div className = "title">
                         {this.state.topic}
                     </div>
-                    <div>
+                    <div className = "running_time">
+                        남은시간 : {this.state.runtime}
+                    </div>
+                    <div className = "memo">
                         <textarea rows="1" cols="33"> </textarea>
-
                     </div>
                 </div>
                 <div className = "div1" onClick={this.add}>
@@ -482,6 +472,9 @@ class UserPage extends React.Component {
                 style = {{display: this.state.now ? 'none' : 'block'}}
                 onClick={this.subtract}>
                 </div>
+                <div className = "canvas" >
+                    <Sketch setup={this.setup} draw={this.draw} />
+                </div>
                 {userTable.map((value, index) => {
                     if (value.name === getQueryStringObject().name){
                         return <MyUser 
@@ -501,7 +494,7 @@ class UserPage extends React.Component {
                         radius={value.radius}></MyUser>
                     }
                 })}
-                <CanvasComponent/>
+                
             </div>
             
         );

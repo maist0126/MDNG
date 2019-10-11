@@ -25,8 +25,16 @@
     <title>MDNG</title>
     <style>
       html,body {
+        overflow: hidden;
+        height: 100%;
+        font-size: 15px;
+      }
+      @media (min-width: 1000px) and (orientation: landscape){
+        html,body {
           overflow: hidden;
           height: 100%;
+          font-size: 20px;
+      }
       }
       #root{
         overflow: hidden;

@@ -17,6 +17,12 @@ function getRandomColor() {
     return color;
 }
 
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
+}
+
 class Form extends React.Component {
     constructor(props) {
         super(props);
@@ -44,7 +50,7 @@ class Form extends React.Component {
                 name: this.state.name,
                 color: getRandomColor(),
                 time: 0,
-                penalty: 0 
+                penalty: 0
             });
             let user_count = snapshot.val()+1;
             fire.database().ref().child('user_count').set(user_count);
