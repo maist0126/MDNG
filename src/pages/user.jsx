@@ -27,9 +27,9 @@ function getQueryStringObject() {
     return b;
 }
 
-function firelistener(ref, fun) {
-    fire.database().ref(ref).once('value').then(fun);
-    fire.database().ref(ref).on('value', fun);
+function firelistener(ref, type, fun) {
+    fire.database().ref(ref).once(type).then(fun);
+    fire.database().ref(ref).on(type, fun);
 }
 
 class UserPage extends React.Component {
@@ -70,10 +70,10 @@ class UserPage extends React.Component {
 
         let add_int = undefined;
         let keys = [];
-        firelistener("topic", snapshot => {
+        firelistener("topic","value", snapshot => {
             this.setState({ topic: snapshot.val() });
         });
-        firelistener("start_status", snapshot => {
+        firelistener("start_status", "value", snapshot => {
             if (snapshot.val().status === 2){
                 this.setState({ clock_status: true, start_status: 2 });
             } else if (snapshot.val().status === 1) {
@@ -86,7 +86,7 @@ class UserPage extends React.Component {
                 this.setState({ clock_status: false, start_status: 0, add_status: 0, sub_status: 0 });
             }
         });
-        firelistener("data", snapshot => {
+        fire.database().ref("data").once("value").then(snapshot => {
             let userTable = []
             let speech_mean = 0;
             for (let key in snapshot.val()){
@@ -97,8 +97,8 @@ class UserPage extends React.Component {
                     color: snapshot.val()[key].color,
                     time: snapshot.val()[key].time,
                     penalty: snapshot.val()[key].penalty,
-                    state: snapshot.val()[key].state,
-                    radius: snapshot.val()[key].radius
+                    state: 0,
+                    radius: 4
                 });
             }
             speech_mean = (speech_mean/userTable.length).toFixed(2);
@@ -113,62 +113,73 @@ class UserPage extends React.Component {
                     if(userTable[i].time !== 0){
                         userTable[i].radius = 3;
                     }
-                } else {
-                    userTable[i].radius = 4;
                 }
             }
             this.setState({ users: userTable });
-            fire.database().ref("order").once('value').then(snapshot => {
-                let userTable = [...this.state.users];
-                for (let j in userTable){
-                    userTable[j].state = 0;
-                }
-                userTable[this.state.my_id].state = 1;
-                let reservers_id = [];
-                let i = 0;
-                for (let key in snapshot.val()) {
-                    reservers_id.push(snapshot.val()[key].id);
-                    if (i === 0){
-                        userTable[snapshot.val()[key].id].state = 5;
-                        this.setState({
-                            full: false,
-                            t_full: false
-                        });
-                    } else if (i === 1){
-                        userTable[snapshot.val()[key].id].state = 4;
-                    } else if (i === 2){
-                        userTable[snapshot.val()[key].id].state = 3;
-                        this.setState({
-                            full: true
-                        });
-                    } else if (i === 3){
-                        userTable[snapshot.val()[key].id].state = 2;
-                        this.setState({
-                            t_full: true
-                        });
-                    }
-                    i ++;
-                }
-                for (let key in reservers_id){
-                    if (reservers_id[key] === this.state.my_id){
-                        this.setState({
-                            now: false,
-                            reserve_done: true
-                        });
-                        break;
-                    } else{
-                        this.setState({
-                            now: false,
-                            reserve_done: false
-                        });
-                    }
-                }
-                this.setState({ 
-                    users: userTable,
-                    reservers: reservers_id  });
-            });;
         });
-        firelistener("order", snapshot => {
+        fire.database().ref("data").on("child_added", snapshot => {
+            let userTable = [...this.state.users];
+            userTable.push({
+                id: snapshot.val().id,
+                name: snapshot.val().name,
+                color: snapshot.val().color,
+                time: snapshot.val().time,
+                penalty: snapshot.val().penalty,
+                state: 0,
+                radius: 4
+            });
+            let speech_mean = 0;
+            for (let key in userTable){
+                speech_mean = speech_mean + userTable[key].time;
+            }
+            speech_mean = (speech_mean/userTable.length).toFixed(2);
+            let high_mean = speech_mean*2;
+            let low_mean = speech_mean*0.5;
+            for (let key in userTable){
+                if (userTable[key].time > high_mean){
+                    if(userTable[key].time !== 0){
+                        userTable[key].radius = 5;
+                    }
+                } else if (userTable[key].time < low_mean){
+                    if(userTable[key].time !== 0){
+                        userTable[key].radius = 3;
+                    }
+                }
+            }
+            this.setState({ users: userTable });
+        });
+        fire.database().ref("data").on("child_changed", snapshot => {
+            let userTable = [...this.state.users];
+            userTable.splice(snapshot.key, 1, {
+                id: snapshot.val().id,
+                name: snapshot.val().name,
+                color: snapshot.val().color,
+                time: snapshot.val().time,
+                penalty: snapshot.val().penalty,
+                state: 0,
+                radius: 4
+            });
+            let speech_mean = 0;
+            for (let key in userTable){
+                speech_mean = speech_mean + userTable[key].time;
+            }
+            speech_mean = (speech_mean/userTable.length).toFixed(2);
+            let high_mean = speech_mean*2;
+            let low_mean = speech_mean*0.5;
+            for (let key in userTable){
+                if (userTable[key].time > high_mean){
+                    if(userTable[key].time !== 0){
+                        userTable[key].radius = 5;
+                    }
+                } else if (userTable[key].time < low_mean){
+                    if(userTable[key].time !== 0){
+                        userTable[key].radius = 3;
+                    }
+                }
+            }
+            this.setState({ users: userTable });
+        });
+        fire.database().ref("order").once("value").then(snapshot => {
             let userTable = [...this.state.users];
             for (let j in userTable){
                 userTable[j].state = 0;
@@ -178,26 +189,6 @@ class UserPage extends React.Component {
             let i = 0;
             for (let key in snapshot.val()) {
                 reservers_id.push(snapshot.val()[key].id);
-                if (i === 0){
-                    userTable[snapshot.val()[key].id].state = 5;
-                    this.setState({
-                        full: false,
-                        t_full: false
-                    });
-                } else if (i === 1){
-                    userTable[snapshot.val()[key].id].state = 4;
-                } else if (i === 2){
-                    userTable[snapshot.val()[key].id].state = 3;
-                    this.setState({
-                        full: true
-                    });
-                } else if (i === 3){
-                    userTable[snapshot.val()[key].id].state = 2;
-                    this.setState({
-                        t_full: true
-                    });
-                }
-                i ++;
             }
             for (let key in reservers_id){
                 if (reservers_id[key] === this.state.my_id){
@@ -213,7 +204,56 @@ class UserPage extends React.Component {
                     });
                 }
             }
-            if (reservers_id[0] !== undefined){
+            if(reservers_id.length > 0){
+                userTable[reservers_id[0]].state = 5;
+                this.setState({
+                    full: false,
+                    t_full: false
+                });
+                if (reservers_id[0] === this.state.my_id){
+                    this.setState({
+                        now: true
+                    });
+                    fire.database().ref().child('start_status').once('value').then(snapshot => {
+                        if (snapshot.val().status === 0){
+                            fire.database().ref().child('start_status').set({ status: 1 });
+                        }
+                    });
+                }
+                if(reservers_id.length > 1){
+                    userTable[reservers_id[1]].state = 4;
+                    if(reservers_id.length > 2){
+                        userTable[reservers_id[2]].state = 3;
+                        this.setState({
+                            full: true
+                        });
+                        if(reservers_id.length > 3){
+                            userTable[reservers_id[3]].state = 2;
+                            this.setState({
+                                t_full: true
+                            });
+                        }
+                    }
+                }
+            }  
+            console.log(reservers_id);
+            console.log(userTable);
+            this.setState({ 
+                users: userTable,
+                reservers: reservers_id  });
+        });
+        fire.database().ref("order").on("child_added", snapshot => {
+            let userTable = [...this.state.users];
+            let reservers_id = [...this.state.reservers];
+            reservers_id.push(snapshot.val().id);
+            userTable[snapshot.val().id].state = 6-reservers_id.length;
+            if(snapshot.val().id === this.state.my_id){
+                this.setState({
+                    now: false,
+                    reserve_done: true
+                });
+            }
+            if (reservers_id.length === 1){
                 if (reservers_id[0] === this.state.my_id){
                     this.setState({
                         now: true
@@ -225,6 +265,63 @@ class UserPage extends React.Component {
                     });
                 }
             }
+            console.log(reservers_id);
+            console.log(userTable);
+            this.setState({ 
+                users: userTable,
+                reservers: reservers_id  });
+        });
+        fire.database().ref("order").on("child_removed", snapshot => {
+            let userTable = [...this.state.users];
+            if (snapshot.val().id === this.state.my_id){
+                userTable[this.state.my_id].state = 1;
+            } else if(snapshot.val().id !== this.state.my_id){
+                userTable[snapshot.val().id].state = 0;
+            }
+            let reservers_id = [...this.state.reservers];
+            reservers_id.splice(reservers_id.findIndex((element) => {
+                return element === snapshot.val().id
+            }), 1);
+            if(snapshot.val().id === this.state.my_id){
+                this.setState({
+                    now: false,
+                    reserve_done: false
+                });
+            }
+            if(reservers_id.length > 0){
+                userTable[reservers_id[0]].state = 5;
+                this.setState({
+                    full: false,
+                    t_full: false
+                });
+                if (reservers_id[0] === this.state.my_id){
+                    this.setState({
+                        now: true
+                    });
+                    fire.database().ref().child('start_status').once('value').then(snapshot => {
+                        if (snapshot.val().status === 0){
+                            fire.database().ref().child('start_status').set({ status: 1 });
+                        }
+                    });
+                }
+                if(reservers_id.length > 1){
+                    userTable[reservers_id[1]].state = 4;
+                    if(reservers_id.length > 2){
+                        userTable[reservers_id[2]].state = 3;
+                        this.setState({
+                            full: true
+                        });
+                        if(reservers_id.length > 3){
+                            userTable[reservers_id[3]].state = 2;
+                            this.setState({
+                                t_full: true
+                            });
+                        }
+                    }
+                }
+            }  
+            console.log(reservers_id);
+            console.log(userTable);
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
@@ -265,7 +362,7 @@ class UserPage extends React.Component {
                 }
             }
         });
-        firelistener("subtracted",snapshot => {
+        firelistener("subtracted", "value", snapshot => {
             if (this.state.now){
                 let i = 0;
                 for (let key in snapshot.val()){
@@ -315,6 +412,9 @@ class UserPage extends React.Component {
                             name: prom[key].name
                         });
                     }
+                    this.setState({
+                        reserve_done: true
+                    });
                 });
             } 
         }else{
@@ -322,6 +422,9 @@ class UserPage extends React.Component {
                 fire.database().ref('/order').push({
                     id: getQueryStringObject().id,
                     name: getQueryStringObject().name
+                });
+                this.setState({
+                    reserve_done: true
                 });
             }
             
@@ -507,11 +610,11 @@ class UserPage extends React.Component {
                 </div>
                 
                 <div className = "reserve_on" 
-                style = {{display: ((this.state.reserve_done) || (this.state.t_full)) ? 'none' : 'block'}}
+                style = {{display: ((this.state.reserve_done) || (this.state.t_full) || (this.state.now)) ? 'none' : 'block'}}
                 onClick={this.reserve_on}>
                 </div>
                 <div className = "reserve_off" 
-                style = {{display: this.state.reserve_done ? 'block' : 'none'}} 
+                style = {{display: ((!this.state.reserve_done) || (this.state.now)) ? 'none' : 'block'}} 
                 onClick={this.reserve_off}>
                 </div> 
                 <div className = "quit" 
@@ -522,7 +625,9 @@ class UserPage extends React.Component {
                 style = {{display: this.state.now ? 'none' : 'block'}}
                 onClick={this.subtract}>
                 </div>
-                <div className = "add" onClick={this.add}>
+                <div className = "add" 
+                style = {{display: this.state.now ? 'none' : 'block'}}
+                onClick={this.add}>
                 </div>
                 <Message state={this.state.sub_status} top={"-15%"}/>
             </div>

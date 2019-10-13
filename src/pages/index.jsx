@@ -56,9 +56,7 @@ class Form extends React.Component {
             name: this.state.name,
             color: getRandomColor(),
             time: 0,
-            penalty: 0,
-            radius: 4,
-            state: 0
+            penalty: 0
         });
         let new_user_count = user_count + 1;
         fire.database().ref().child('user_count').set(new_user_count);
