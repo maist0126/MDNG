@@ -530,16 +530,16 @@ class UserPage extends React.Component {
                         key={index} 
                         state={value.state}
                         name="ME" 
-                        top="20%" 
-                        left="85%"
+                        top="20vh" 
+                        left="85vw"
                         radius={value.radius}></MyUser>
                     } else {
                         return <MyUser 
                         key={index} 
                         state={value.state}
                         name={value.name} 
-                        top={`${getRandomInt(50, 90)}%`} 
-                        left={`${getRandomInt(85, 95)}%`}
+                        top={`${getRandomInt(50, 90)}vh`} 
+                        left={`${getRandomInt(85, 95)}vw`}
                         radius={value.radius}></MyUser>
                     }
                 })}
