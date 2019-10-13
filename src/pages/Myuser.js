@@ -31,25 +31,25 @@ function MyUser(propps) {
 
     useEffect(() => {  
         if (propps.state === 0){
-            set({ top: `${getRandomInt(50, 90)}%` , left: `${getRandomInt(85, 95)}%`});
+            set({ top: `${getRandomInt(40, 95)}vh` , left: `${getRandomInt(85, 95)}vw`});
         } else if (propps.state === 1){
-            set({ top: '20%' , left: '85%'});
+            set({ top: '20vh' , left: '85vw'});
         } else if (propps.state === 2){
-            set({ top: '20%' , left: '58%'});
+            set({ top: '20vh' , left: '65vw'});
         } else if (propps.state === 3){
-            set({ top: '20%' , left: '45%'});
+            set({ top: '20vh' , left: '50vw'});
         } else if (propps.state === 4){
-            set({ top: '20%' , left: '32%'});
+            set({ top: '20vh' , left: '35vw'});
         } else if (propps.state === 5){
-            set({ top: '50%' , left: '14%'});
+            set({ top: '50vh' , left: '15vw'});
         }
 
         if (propps.radius === 5){
-            set({ width: '5rem', height: '5rem'});
+            set({ width: '20vmin', height: '20vmin', fontSize: '1.25rem'});
         } else if (propps.radius === 3){
-            set({ width: '3rem', height: '3rem'});
+            set({ width: '12vmin', height: '12vmin', fontSize: '0.75rem'});
         } else if (propps.radius === 4){
-            set({ width: '4rem', height: '4rem'});
+            set({ width: '16vmin', height: '16vmin', fontSize: '1rem'});
         }
     });
 

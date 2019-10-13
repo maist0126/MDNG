@@ -418,6 +418,28 @@ class UserPage extends React.Component {
                 </div>
                 <div className = "div3">  
                 </div>
+                <div className = "canvas" style = {{display: this.state.clock_status ? 'block' : "none"}}>
+                    <Sketch setup={this.setup} draw={this.draw} />
+                </div>
+                {userTable.map((value, index) => {
+                    if (value.name === getQueryStringObject().name){
+                        return <MyUser 
+                        key={index} 
+                        state={value.state}
+                        name="ME" 
+                        top="20%" 
+                        left="85%"
+                        radius={value.radius}></MyUser>
+                    } else {
+                        return <MyUser 
+                        key={index} 
+                        state={value.state}
+                        name={value.name} 
+                        top={`${getRandomInt(50, 90)}%`} 
+                        left={`${getRandomInt(85, 95)}%`}
+                        radius={value.radius}></MyUser>
+                    }
+                })}
                 <div className="clap" >
                     <Particles 
                         params={{
@@ -468,29 +490,6 @@ class UserPage extends React.Component {
                             }
                         }} />
                 </div>
-                <div className = "canvas" style = {{display: this.state.clock_status ? 'block' : "none"}}>
-                    <Sketch setup={this.setup} draw={this.draw} />
-                </div>
-                {userTable.map((value, index) => {
-                    if (value.name === getQueryStringObject().name){
-                        return <MyUser 
-                        key={index} 
-                        state={value.state}
-                        name="ME" 
-                        top="20%" 
-                        left="85%"
-                        radius={value.radius}></MyUser>
-                    } else {
-                        return <MyUser 
-                        key={index} 
-                        state={value.state}
-                        name={value.name} 
-                        top={`${getRandomInt(50, 90)}%`} 
-                        left={`${getRandomInt(85, 95)}%`}
-                        radius={value.radius}></MyUser>
-                    }
-                })}
-
                 <div className = "center_box">
                     {/* <div className = "heading">
                             회의 주제
@@ -501,10 +500,12 @@ class UserPage extends React.Component {
                     {/* <div className = "running_time">
                         남은시간 : {this.state.runtime}
                     </div> */}
-                    <div className = "memo">
-                        <input type="text" className="textarea"/>
+                    <div className="memo">
+                        <input type="text" id="inp" placeholder="메모를 입력하세요."/>
+                        <span className="border"></span>
                     </div>
                 </div>
+                
                 <div className = "reserve_on" 
                 style = {{display: ((this.state.reserve_done) || (this.state.t_full)) ? 'none' : 'block'}}
                 onClick={this.reserve_on}>

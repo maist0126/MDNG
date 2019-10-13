@@ -73,7 +73,7 @@ class Form extends React.Component {
             return (
                 <div>
                     <form onSubmit={e => this.create(e)}>
-                        <label>
+                        <label className="label">
                             Name: 
                             <input
                                 name='name'
