@@ -1,24 +1,11 @@
-import React, {useEffect} from 'react';
-import {useSpring, animated} from 'react-spring';
+import React from 'react';
 import "./user.css"
 import fire from './fire';
+import MyUser from './Myuser';
+import Message from './Message';
 import Sketch from "react-p5";
-
-
-
-function getRandomColor() {
-    var o_letters = '89ABCDEF';
-    var e_letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        if (i%2 === 0){
-            color += o_letters[Math.floor(Math.random() * 8)];
-        } else{
-            color += e_letters[Math.floor(Math.random() * 16)];
-        }
-    }
-    return color;
-}
+import clap from "./img/clap.png";
+import Particles from 'react-particles-js';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -45,51 +32,6 @@ function firelistener(ref, fun) {
     fire.database().ref(ref).on('value', fun);
 }
 
-function MyUser(propps) {
-    const [props, set, stop] = useSpring(() => ({
-        top: propps.top,
-        left: propps.left,
-        backgroundColor: getRandomColor(),
-       }))
-
-    useEffect(() => {  
-        if (propps.state === 0){
-            set({ top: `${getRandomInt(50, 90)}%` , left: `${getRandomInt(85, 95)}%`});
-        } else if (propps.state === 1){
-            set({ top: '20%' , left: '85%'});
-        } else if (propps.state === 2){
-            set({ top: '20%' , left: '58%'});
-        } else if (propps.state === 3){
-            set({ top: '20%' , left: '45%'});
-        } else if (propps.state === 4){
-            set({ top: '20%' , left: '32%'});
-        } else if (propps.state === 5){
-            set({ top: '50%' , left: '14%'});
-        }
-
-        if (propps.radius === 5){
-            set({ width: '5rem', height: '5rem'});
-        } else if (propps.radius === 3){
-            set({ width: '3rem', height: '3rem'});
-        } else if (propps.radius === 4){
-            set({ width: '4rem', height: '4rem'});
-        }
-    });
-
-    return (
-        <animated.div
-            className="User"
-            state={propps.state}
-            style={props}>
-            <div className="User_name"> 
-                {propps.name}
-            </div>
-        </animated.div>
-    )
-}
-
-
-
 class UserPage extends React.Component {
     constructor(props){
         super(props);
@@ -111,7 +53,10 @@ class UserPage extends React.Component {
             now: false,
             reservers: [],
             runtime: undefined,
-            clock_status: false
+            clock_status: false,
+            add_status: 0,
+            sub_status: 0,
+            start_status: 0
         }
     }
     componentWillMount() {
@@ -122,14 +67,23 @@ class UserPage extends React.Component {
         //     let m = minutes + ":" + seconds ;
         //     this.setState({ runtime: m });
         // });
+
+        let add_int = undefined;
+        let keys = [];
         firelistener("topic", snapshot => {
             this.setState({ topic: snapshot.val() });
         });
         firelistener("start_status", snapshot => {
             if (snapshot.val().status === 2){
-                this.setState({ clock_status: true });
-            } else {
-                this.setState({ clock_status: false });
+                this.setState({ clock_status: true, start_status: 2 });
+            } else if (snapshot.val().status === 1) {
+                this.setState({ clock_status: false, start_status: 1 });
+            } else if (snapshot.val().status === 0) {
+                clearInterval(add_int);
+                fire.database().ref('add').set(null);
+                fire.database().ref('subtract').set(null);
+                fire.database().ref('subtracted').set(null);
+                this.setState({ clock_status: false, start_status: 0, add_status: 0, sub_status: 0 });
             }
         });
         firelistener("data", snapshot => {
@@ -152,11 +106,11 @@ class UserPage extends React.Component {
             let low_mean = speech_mean*0.5;
             for (let i = 0; i<userTable.length; i++){
                 if (userTable[i].time > high_mean){
-                    if(userTable[i].time != 0){
+                    if(userTable[i].time !== 0){
                         userTable[i].radius = 5;
                     }
                 } else if (userTable[i].time < low_mean){
-                    if(userTable[i].time != 0){
+                    if(userTable[i].time !== 0){
                         userTable[i].radius = 3;
                     }
                 } else {
@@ -206,18 +160,6 @@ class UserPage extends React.Component {
                         this.setState({
                             now: false,
                             reserve_done: false
-                        });
-                    }
-                }
-                if (reservers_id[0] !== undefined){
-                    if (reservers_id[0] === this.state.my_id){
-                        this.setState({
-                            now: true
-                        });
-                        fire.database().ref().child('start_status').once('value').then(snapshot => {
-                            if (snapshot.val().status === 0){
-                                fire.database().ref().child('start_status').set({ status: 1 });
-                            }
                         });
                     }
                 }
@@ -287,6 +229,67 @@ class UserPage extends React.Component {
                 users: userTable,
                 reservers: reservers_id  });
         });
+        fire.database().ref("add").on('child_added', snapshot => {
+            if(this.state.start_status !== 0){
+                let i = this.state.add_status
+                this.setState({
+                    add_status: i+1
+                })
+                if (snapshot.val().id === this.state.my_id){
+                    keys.push(snapshot.key);
+                    clearInterval(add_int);
+                    add_int = setTimeout(() => {
+                        for (let key in keys){
+                            fire.database().ref().child('add/' + keys[key]).remove();
+                        }
+                        keys = [];
+                    },5000);
+                }
+            }
+        });
+        fire.database().ref("add").on('child_removed', snapshot => {
+            if (this.state.start_status !== 0){
+                let i = this.state.add_status;
+                this.setState({
+                    add_status: i-1
+                });
+            }
+        });
+        fire.database().ref("subtract").on('child_added', snapshot => {
+            if(this.state.start_status !== 0){
+                if (this.state.now){
+                    fire.database().ref('/subtracted/'+snapshot.val().id).set({
+                        status: 1  
+                    });
+                    fire.database().ref().child('subtract/' + snapshot.key).remove();
+                }
+            }
+        });
+        firelistener("subtracted",snapshot => {
+            if (this.state.now){
+                let i = 0;
+                for (let key in snapshot.val()){
+                    i++;
+                }
+                if (i === 0){
+                    this.setState({
+                        sub_status: 0
+                    });
+                } else if (i === 1){
+                    this.setState({
+                        sub_status: 1
+                    });
+                } else if (i === 2){
+                    this.setState({
+                        sub_status: 2
+                    });
+                } else if (i > 2){
+                    this.setState({
+                        sub_status: 3
+                    });
+                }
+            }
+        });
     }
 
     reserve_on = () => {
@@ -346,13 +349,21 @@ class UserPage extends React.Component {
 
     add = () => {
         if(!this.state.now){
-            
+            if (this.state.start_status !== 0){
+                fire.database().ref('add').push({
+                    id: this.state.my_id,
+                });
+            } 
         }
     }
 
     subtract = () => {
         if(!this.state.now){
-            
+            if (this.state.start_status !== 0){
+                fire.database().ref('subtract').push({
+                    id: this.state.my_id,
+                });
+            } 
         }
     }
     setup = (p5, parent) => {
@@ -398,45 +409,64 @@ class UserPage extends React.Component {
 
     render(){
         const userTable = [...this.state.users];
+        const numbers = this.state.add_status*10;
         return (
             <div className = "UserPage">
-                <div className = "div3">  
+                <div className = "div1">
                 </div>
                 <div className = "div2">
                 </div>
-                <div className = "center_box">
-                    {/* <div className = "heading">
-                            회의 주제
-                    </div> */}
-                    <div className = "title">
-                        주제: {this.state.topic}
-                    </div>
-                    {/* <div className = "running_time">
-                        남은시간 : {this.state.runtime}
-                    </div> */}
-                    <div className = "memo">
-                        <input type="text" className="textarea"/>
-                    </div>
+                <div className = "div3">  
                 </div>
-                <div className = "div1" onClick={this.add}>
-                </div>
-                
-                
-                <div className = "reserve_on" 
-                style = {{display: ((this.state.reserve_done) || (this.state.t_full)) ? 'none' : 'block'}}
-                onClick={this.reserve_on}>
-                </div>
-                <div className = "reserve_off" 
-                style = {{display: this.state.reserve_done ? 'block' : 'none'}} 
-                onClick={this.reserve_off}>
-                </div> 
-                <div className = "quit" 
-                style = {{display: this.state.now ? 'block' : 'none'}}
-                onClick={this.quit}>
-                </div>
-                <div className = "subtract" 
-                style = {{display: this.state.now ? 'none' : 'block'}}
-                onClick={this.subtract}>
+                <div className="clap" >
+                    <Particles 
+                        params={{
+                            particles: {
+                                number: {
+                                    value: numbers,
+                                    density: {
+                                        enable: true,
+                                        value_area: 1000
+                                    }
+                                },
+                                shape: {
+                                    type: "image",
+                                    image: {
+                                        src: clap
+                                    }
+                                },
+                                opacity:{
+                                    value: 0.5,
+                                    random: false,
+                                    anim:{
+                                        enable: false,
+                                        speed: 1,
+                                        opacity_min: 0.1,
+                                        sync: false
+                                    }
+                                },
+                                size:{
+                                    value: 15,
+                                    random: false,
+                                },
+                                line_linked:{
+                                    enable: false
+                                },
+                                move: {
+                                    enable: true,
+                                    speed: 3,
+                                    direction: "left",
+                                    random: false,
+                                    straight: false,
+                                    out_mode: "out",
+                                    attract: {
+                                        enable: false,
+                                        rotateX: 600,
+                                        rotateY: 1200
+                                    }
+                                }
+                            }
+                        }} />
                 </div>
                 <div className = "canvas" style = {{display: this.state.clock_status ? 'block' : "none"}}>
                     <Sketch setup={this.setup} draw={this.draw} />
@@ -460,9 +490,41 @@ class UserPage extends React.Component {
                         radius={value.radius}></MyUser>
                     }
                 })}
-                
+
+                <div className = "center_box">
+                    {/* <div className = "heading">
+                            회의 주제
+                    </div> */}
+                    <div className = "title">
+                        주제: {this.state.topic}
+                    </div>
+                    {/* <div className = "running_time">
+                        남은시간 : {this.state.runtime}
+                    </div> */}
+                    <div className = "memo">
+                        <input type="text" className="textarea"/>
+                    </div>
+                </div>
+                <div className = "reserve_on" 
+                style = {{display: ((this.state.reserve_done) || (this.state.t_full)) ? 'none' : 'block'}}
+                onClick={this.reserve_on}>
+                </div>
+                <div className = "reserve_off" 
+                style = {{display: this.state.reserve_done ? 'block' : 'none'}} 
+                onClick={this.reserve_off}>
+                </div> 
+                <div className = "quit" 
+                style = {{display: this.state.now ? 'block' : 'none'}}
+                onClick={this.quit}>
+                </div>
+                <div className = "subtract" 
+                style = {{display: this.state.now ? 'none' : 'block'}}
+                onClick={this.subtract}>
+                </div>
+                <div className = "add" onClick={this.add}>
+                </div>
+                <Message state={this.state.sub_status} top={"-15%"}/>
             </div>
-            
         );
     }
 }
