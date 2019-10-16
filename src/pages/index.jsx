@@ -72,7 +72,7 @@ class Form extends React.Component {
                 <div>
                     <form onSubmit={e => this.create(e)}>
                         <label className="label">
-                            Name: 
+                            이름: 
                             <input
                                 name='name'
                                 value={this.state.name}
@@ -86,7 +86,7 @@ class Form extends React.Component {
             return (
                 <div>
                     <Link className="go" to={`./user?id=${this.state.id}&name=${this.state.name}`}>
-                        {this.state.name}, Let's go to the Meeting room!
+                        {this.state.name}, 채팅방 입장하기
                     </Link>
                 </div>
             );

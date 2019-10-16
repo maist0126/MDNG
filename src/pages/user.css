@@ -189,14 +189,53 @@ input::placeholder {
     z-index: 2;
 }
 .message{
-    background-color: #CCC;
-    border-radius: 10px;
+    width: 50vw;
+    height: 17vh;
+    border-radius: 16px;
+    background-image: url( "img/message_bg.png" );
     color: #000000;
     font-size: 20px;
     font-weight: bold;
     position: absolute;
-    padding: 20px;
     top: 80vh;
-    left: 55vw;
+    left: 52vw;
     transform: translate(-50%,-50%);
+    padding-top: 14px;
+    padding-left: 14px;
+    padding-right: 14px;
+}
+
+.m_header{
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+.ok{
+    position: relative;
+    float: left;
+}
+.m_title{
+    position: relative;
+    padding-left: 7px;
+    padding-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+    float: left;
+}
+.m_now{
+    position: relative;
+    float: right;
+    padding-top: 2px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.m_content{
+    position: relative;
+    float: left;
+    width: 100%;
+    text-align: left;
+    padding-top: 7px;
+    font-size: 15px;
+    font-weight: 500;
 }

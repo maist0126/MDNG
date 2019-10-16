@@ -5,6 +5,10 @@ import MyUser from './Myuser';
 import Message from './Message';
 import Sketch from "react-p5";
 import clap from "./img/clap.png";
+import wow from "./img/wow.png";
+import like from "./img/like.png";
+
+import cel from "./img/cel.png";
 import Particles from 'react-particles-js';
 
 function getRandomInt(min, max) {
@@ -79,7 +83,6 @@ class UserPage extends React.Component {
             } else if (snapshot.val().status === 1) {
                 this.setState({ clock_status: false, start_status: 1 });
             } else if (snapshot.val().status === 0) {
-                clearInterval(add_int);
                 fire.database().ref('add').set(null);
                 fire.database().ref('subtract').set(null);
                 fire.database().ref('subtracted').set(null);
@@ -117,6 +120,7 @@ class UserPage extends React.Component {
             }
             this.setState({ users: userTable });
         });
+        
         fire.database().ref("data").on("child_added", snapshot => {
             let userTable = [...this.state.users];
             userTable.push({
@@ -148,6 +152,7 @@ class UserPage extends React.Component {
             }
             this.setState({ users: userTable });
         });
+
         fire.database().ref("data").on("child_changed", snapshot => {
             let userTable = [...this.state.users];
             userTable.splice(snapshot.key, 1, {
@@ -179,6 +184,7 @@ class UserPage extends React.Component {
             }
             this.setState({ users: userTable });
         });
+
         fire.database().ref("order").once("value").then(snapshot => {
             let userTable = [...this.state.users];
             for (let j in userTable){
@@ -236,12 +242,11 @@ class UserPage extends React.Component {
                     }
                 }
             }  
-            console.log(reservers_id);
-            console.log(userTable);
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
         });
+
         fire.database().ref("order").on("child_added", snapshot => {
             let userTable = [...this.state.users];
             let reservers_id = [...this.state.reservers];
@@ -265,12 +270,11 @@ class UserPage extends React.Component {
                     });
                 }
             }
-            console.log(reservers_id);
-            console.log(userTable);
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
         });
+
         fire.database().ref("order").on("child_removed", snapshot => {
             let userTable = [...this.state.users];
             if (snapshot.val().id === this.state.my_id){
@@ -320,8 +324,6 @@ class UserPage extends React.Component {
                     }
                 }
             }  
-            console.log(reservers_id);
-            console.log(userTable);
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
@@ -469,9 +471,11 @@ class UserPage extends React.Component {
             } 
         }
     }
+
     setup = (p5, parent) => {
         p5.createCanvas(120, 120).parent(parent)
     }
+    
     draw = p5 => {
         fire.database().ref().child('rem_time').on('value', snapshot => {
             if (snapshot.val().time > 0){
@@ -512,7 +516,10 @@ class UserPage extends React.Component {
 
     render(){
         const userTable = [...this.state.users];
-        const numbers = this.state.add_status*10;
+        let numbers = 0
+        if (this.state.add_status !== 0){
+            numbers = 6 + this.state.add_status*2;
+        }
         return (
             <div className = "UserPage">
                 <div className = "div1">
@@ -550,14 +557,14 @@ class UserPage extends React.Component {
                                 number: {
                                     value: numbers,
                                     density: {
-                                        enable: true,
-                                        value_area: 1000
+                                        enable: false,
+                                        value_area: 200
                                     }
                                 },
                                 shape: {
                                     type: "image",
                                     image: {
-                                        src: clap
+                                        src: wow
                                     }
                                 },
                                 opacity:{
@@ -571,7 +578,7 @@ class UserPage extends React.Component {
                                     }
                                 },
                                 size:{
-                                    value: 15,
+                                    value:25,
                                     random: false,
                                 },
                                 line_linked:{
@@ -579,18 +586,14 @@ class UserPage extends React.Component {
                                 },
                                 move: {
                                     enable: true,
-                                    speed: 3,
-                                    direction: "left",
+                                    speed: 6,
+                                    direction: "top",
                                     random: false,
-                                    straight: false,
-                                    out_mode: "out",
-                                    attract: {
-                                        enable: false,
-                                        rotateX: 600,
-                                        rotateY: 1200
-                                    }
+                                    straight: true,
+                                    out_mode: "out"
                                 }
-                            }
+                            },
+                            retina_detect: true
                         }} />
                 </div>
                 <div className = "center_box">
