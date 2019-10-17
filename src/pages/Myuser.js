@@ -23,12 +23,11 @@ function getRandomInt(min, max) {
 }
 
 function MyUser(propps) {
-    const [props, set, stop] = useSpring(() => ({
+    const [props, set] = useSpring(() => ({
         top: propps.top,
         left: propps.left,
         backgroundColor: getRandomColor(),
        }))
-
     useEffect(() => {  
         if (propps.state === 0){
             set({ top: `${getRandomInt(40, 95)}vh` , left: `${getRandomInt(85, 95)}vw`});
