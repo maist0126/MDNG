@@ -23,7 +23,7 @@ function getRandomInt(min, max) {
 }
 
 function MyUser(propps) {
-    const [props, set] = useSpring(() => ({
+    const [props, set, stop] = useSpring(() => ({
         top: propps.top,
         left: propps.left,
         backgroundColor: getRandomColor(),

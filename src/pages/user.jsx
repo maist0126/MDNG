@@ -3,13 +3,14 @@ import "./user.css"
 import fire from './fire';
 import MyUser from './Myuser';
 import Message from './Message';
+import Like from './Like';
+import Saying from './Saying';
 import Sketch from "react-p5";
 import clap from "./img/clap.png";
 import wow from "./img/wow.png";
 import like from "./img/like.png";
 
 import cel from "./img/cel.png";
-import Particles from 'react-particles-js';
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -58,9 +59,11 @@ class UserPage extends React.Component {
             reservers: [],
             runtime: undefined,
             clock_status: false,
-            add_status: 0,
+            add_status: [],
             sub_status: 0,
-            start_status: 0
+            start_status: 0,
+            speech_status: false,
+            sub_clicked: 0
         }
     }
     componentWillMount() {
@@ -71,22 +74,19 @@ class UserPage extends React.Component {
         //     let m = minutes + ":" + seconds ;
         //     this.setState({ runtime: m });
         // });
-
-        let add_int = undefined;
-        let keys = [];
         firelistener("topic","value", snapshot => {
             this.setState({ topic: snapshot.val() });
         });
         firelistener("start_status", "value", snapshot => {
             if (snapshot.val().status === 2){
-                this.setState({ clock_status: true, start_status: 2 });
+                this.setState({ clock_status: true, start_status: 2, speech_status: false });
             } else if (snapshot.val().status === 1) {
-                this.setState({ clock_status: false, start_status: 1 });
+                this.setState({ clock_status: false, start_status: 1, speech_status: true });
             } else if (snapshot.val().status === 0) {
                 fire.database().ref('add').set(null);
                 fire.database().ref('subtract').set(null);
                 fire.database().ref('subtracted').set(null);
-                this.setState({ clock_status: false, start_status: 0, add_status: 0, sub_status: 0 });
+                this.setState({ clock_status: false, start_status: 0, add_status: [], sub_status: 0, speech_status: false });
             }
         });
         fire.database().ref("data").once("value").then(snapshot => {
@@ -330,27 +330,10 @@ class UserPage extends React.Component {
         });
         fire.database().ref("add").on('child_added', snapshot => {
             if(this.state.start_status !== 0){
-                let i = this.state.add_status
+                let likes = [...this.state.add_status];
+                likes.push(<Like key = {getRandomInt(0, 1000)}></Like>);
                 this.setState({
-                    add_status: i+1
-                })
-                if (snapshot.val().id === this.state.my_id){
-                    keys.push(snapshot.key);
-                    clearInterval(add_int);
-                    add_int = setTimeout(() => {
-                        for (let key in keys){
-                            fire.database().ref().child('add/' + keys[key]).remove();
-                        }
-                        keys = [];
-                    },5000);
-                }
-            }
-        });
-        fire.database().ref("add").on('child_removed', snapshot => {
-            if (this.state.start_status !== 0){
-                let i = this.state.add_status;
-                this.setState({
-                    add_status: i-1
+                    add_status: likes
                 });
             }
         });
@@ -468,7 +451,15 @@ class UserPage extends React.Component {
                 fire.database().ref('subtract').push({
                     id: this.state.my_id,
                 });
-            } 
+                this.setState({
+                    sub_clicked: 3
+                }); 
+                setTimeout(()=> {
+                    this.setState({
+                        sub_clicked: 0
+                    }); 
+                }, 2000);
+            }
         }
     }
 
@@ -516,10 +507,6 @@ class UserPage extends React.Component {
 
     render(){
         const userTable = [...this.state.users];
-        let numbers = 0
-        if (this.state.add_status !== 0){
-            numbers = 6 + this.state.add_status*2;
-        }
         return (
             <div className = "UserPage">
                 <div className = "div1">
@@ -527,6 +514,11 @@ class UserPage extends React.Component {
                 <div className = "div2">
                 </div>
                 <div className = "div3">  
+                </div>
+                <div className="load-3" style = {{display: this.state.speech_status ? 'block' : 'none'}}>
+                    <div className="line"></div>
+                    <div className="line"></div>
+                    <div className="line"></div>
                 </div>
                 <div className = "canvas" style = {{display: this.state.clock_status ? 'block' : "none"}}>
                     <Sketch setup={this.setup} draw={this.draw} />
@@ -551,50 +543,7 @@ class UserPage extends React.Component {
                     }
                 })}
                 <div className="clap" >
-                    <Particles 
-                        params={{
-                            particles: {
-                                number: {
-                                    value: numbers,
-                                    density: {
-                                        enable: false,
-                                        value_area: 200
-                                    }
-                                },
-                                shape: {
-                                    type: "image",
-                                    image: {
-                                        src: wow
-                                    }
-                                },
-                                opacity:{
-                                    value: 0.5,
-                                    random: false,
-                                    anim:{
-                                        enable: false,
-                                        speed: 1,
-                                        opacity_min: 0.1,
-                                        sync: false
-                                    }
-                                },
-                                size:{
-                                    value:25,
-                                    random: false,
-                                },
-                                line_linked:{
-                                    enable: false
-                                },
-                                move: {
-                                    enable: true,
-                                    speed: 6,
-                                    direction: "top",
-                                    random: false,
-                                    straight: true,
-                                    out_mode: "out"
-                                }
-                            },
-                            retina_detect: true
-                        }} />
+                    {this.state.add_status[this.state.add_status.length-1]}
                 </div>
                 <div className = "center_box">
                     {/* <div className = "heading">
@@ -632,7 +581,8 @@ class UserPage extends React.Component {
                 style = {{display: this.state.now ? 'none' : 'block'}}
                 onClick={this.add}>
                 </div>
-                <Message state={this.state.sub_status} top={"-15%"}/>
+                <Message text= {"청자들이 충분히 이해한 것 같습니다."} state={this.state.sub_status} top={"-15%"}/>
+                <Message text= {"화자에게 전달하였습니다."} state={this.state.sub_clicked} top={"-15%"}/>
             </div>
         );
     }
