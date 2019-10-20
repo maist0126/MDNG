@@ -9,6 +9,13 @@
     height: 16vmin;
     border-radius: 50%;
     font-size: 1.0rem;
+    
+}
+
+.Userbox {
+    /* top: 20vh;
+    left: 80vw; */
+    transform: translate(20vh, 80vw);
 }
 
 .User_name {

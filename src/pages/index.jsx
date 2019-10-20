@@ -29,17 +29,8 @@ class Form extends React.Component {
         this.state = {
             id: 0,
             name: '',
-            user_count: 0,
             save_state: false
         };
-    }
-
-    componentWillMount() {
-        fire.database().ref().child('user_count').on('value', snapshot => {
-            this.setState({
-                user_count: snapshot.val()
-            })
-        });
     }
 
     handleChange = (e) => {
@@ -50,19 +41,36 @@ class Form extends React.Component {
 
     create = (e) => {
         e.preventDefault();
-        let user_count = this.state.user_count;
-        fire.database().ref('/data/'+user_count).set({
-            id: user_count,
+        let key = fire.database().ref('/data/').push({
             name: this.state.name,
             color: getRandomColor(),
             time: 0,
             penalty: 0
-        });
-        let new_user_count = user_count + 1;
-        fire.database().ref().child('user_count').set(new_user_count);
-        this.setState({
-            id: user_count,
-            save_state: true
+        }).key;
+        fire.database().ref('/data/').once('value').then(snapshot => {
+            let i = 0;
+            let j = 0;
+            console.log(snapshot.val());
+            for (let y in snapshot.val()){
+                console.log(key);
+                console.log(Object.keys(snapshot.val())[j]);
+                if (key === Object.keys(snapshot.val())[j]){
+                    i = j;
+                    break;
+                }
+                j ++;
+            }
+            fire.database().ref('/data/'+key).set({
+                id: i,
+                name: this.state.name,
+                color: getRandomColor(),
+                time: 0,
+                penalty: 0
+            });
+            this.setState({
+                id: i,
+                save_state: true
+            })
         })
     }
 

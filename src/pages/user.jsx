@@ -92,9 +92,11 @@ class UserPage extends React.Component {
         fire.database().ref("data").once("value").then(snapshot => {
             let userTable = []
             let speech_mean = 0;
+            let aa = 0;
             for (let key in snapshot.val()){
                 speech_mean = speech_mean + snapshot.val()[key].time;
                 userTable.push({
+                    key: Object.keys(snapshot.val())[aa],
                     id: snapshot.val()[key].id,
                     name: snapshot.val()[key].name,
                     color: snapshot.val()[key].color,
@@ -103,6 +105,7 @@ class UserPage extends React.Component {
                     state: 0,
                     radius: 4
                 });
+                aa ++;
             }
             speech_mean = (speech_mean/userTable.length).toFixed(2);
             let high_mean = speech_mean*2;
@@ -124,6 +127,7 @@ class UserPage extends React.Component {
         fire.database().ref("data").on("child_added", snapshot => {
             let userTable = [...this.state.users];
             userTable.push({
+                key: snapshot.key,
                 id: snapshot.val().id,
                 name: snapshot.val().name,
                 color: snapshot.val().color,
@@ -155,7 +159,8 @@ class UserPage extends React.Component {
 
         fire.database().ref("data").on("child_changed", snapshot => {
             let userTable = [...this.state.users];
-            userTable.splice(snapshot.key, 1, {
+            userTable.splice(snapshot.val().id, 1, {
+                key: snapshot.key,
                 id: snapshot.val().id,
                 name: snapshot.val().name,
                 color: snapshot.val().color,
@@ -382,19 +387,21 @@ class UserPage extends React.Component {
                     let i = 0;
                     for (let key in snapshot.val()){
                         if (i !== 0){
-                            prom.push({id: snapshot.val()[key].id, name: snapshot.val()[key].name, radius: snapshot.val()[key].radius});
+                            prom.push({id: snapshot.val()[key].id, name: snapshot.val()[key].name, key: snapshot.val()[key].key});
                             fire.database().ref().child('order/' + Object.keys(snapshot.val())[i]).remove();
                         }
                         i ++;
                     }
                     fire.database().ref('/order').push({
                         id: getQueryStringObject().id,
-                        name: getQueryStringObject().name
+                        name: getQueryStringObject().name,
+                        key: this.state.users[this.state.my_id].key
                     });
                     for (let key in prom){
                         fire.database().ref('/order').push({
                             id: prom[key].id,
-                            name: prom[key].name
+                            name: prom[key].name,
+                            key: prom[key].key
                         });
                     }
                     this.setState({
@@ -406,7 +413,8 @@ class UserPage extends React.Component {
             if(!this.state.reserve_done && !this.state.full){
                 fire.database().ref('/order').push({
                     id: getQueryStringObject().id,
-                    name: getQueryStringObject().name
+                    name: getQueryStringObject().name,
+                    key: this.state.users[this.state.my_id].key
                 });
                 this.setState({
                     reserve_done: true
