@@ -29,7 +29,7 @@ class Form extends React.Component {
         this.state = {
             id: 0,
             name: '',
-            save_state: false
+            save_state: 0
         };
     }
 
@@ -47,13 +47,13 @@ class Form extends React.Component {
             time: 0,
             penalty: 0
         }).key;
+        this.setState({
+            save_state: 1
+        })
         fire.database().ref('/data/').once('value').then(snapshot => {
             let i = 0;
             let j = 0;
-            console.log(snapshot.val());
             for (let y in snapshot.val()){
-                console.log(key);
-                console.log(Object.keys(snapshot.val())[j]);
                 if (key === Object.keys(snapshot.val())[j]){
                     i = j;
                     break;
@@ -69,13 +69,13 @@ class Form extends React.Component {
             });
             this.setState({
                 id: i,
-                save_state: true
+                save_state: 2
             })
         })
     }
 
     render() {
-        if (!this.state.save_state){
+        if (this.state.save_state == 0){
             return (
                 <div>
                     <form onSubmit={e => this.create(e)}>
@@ -90,7 +90,13 @@ class Form extends React.Component {
                     </form>
                 </div>
             );
-        } else {
+        } else if(this.state.save_state == 1) {
+            return (
+                <div>
+                    Wait for seconds...
+                </div>
+            );
+        } else{
             return (
                 <div>
                     <Link className="go" to={`./user?id=${this.state.id}&name=${this.state.name}`}>

@@ -13,9 +13,9 @@ function Message(propps) {
         if (propps.state === 0){
             set({ top: "-15%",  opacity: 0});
         } else if (propps.state === 1){
-            set({ top: '15%', opacity: 0.6});
+            set({ top: '15%', opacity: 1});
         } else if (propps.state === 2){
-            set({ top: '15%',  opacity: 0.8});
+            set({ top: '15%',  opacity: 1});
         } else if (propps.state === 3){
             set({ top: '15%',  opacity: 1});
         }
