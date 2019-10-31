@@ -4,14 +4,7 @@ import fire from './fire';
 import MyUser from './Myuser';
 import Message from './Message';
 import Like from './Like';
-import Saying from './Saying';
 import Sketch from "react-p5";
-import clap from "./img/clap.png";
-import wow from "./img/wow.png";
-import like from "./img/like.png";
-
-import cel from "./img/cel.png";
-
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
