@@ -30,25 +30,17 @@ function MyUser(propps) {
        }))
     useEffect(() => {  
         if (propps.state === 0){
-            set({ top: `${getRandomInt(40, 95)}vh` , left: `${getRandomInt(85, 95)}vw`});
+            set({ top: `${getRandomInt(50, 90)}vh` , left: `${getRandomInt(35, 75)}vw`});
         } else if (propps.state === 1){
-            set({ top: '20vh' , left: '85vw'});
+            set({ top: `${getRandomInt(50, 90)}vh` , left: `${getRandomInt(35, 75)}vw`});
         } else if (propps.state === 2){
-            set({ top: '20vh' , left: '65vw'});
+            set({ top: '20vh' , left: '65vw', width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 3){
-            set({ top: '20vh' , left: '50vw'});
+            set({ top: '29.6vh' , left: '51.3vw', width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 4){
-            set({ top: '20vh' , left: '35vw'});
+            set({ top: '29.6vh' , left: '37.8vw', width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 5){
-            set({ top: '50vh' , left: '15vw'});
-        }
-
-        if (propps.radius === 5){
-            set({ width: '20vmin', height: '20vmin', fontSize: '1.25rem'});
-        } else if (propps.radius === 3){
-            set({ width: '12vmin', height: '12vmin', fontSize: '0.75rem'});
-        } else if (propps.radius === 4){
-            set({ width: '16vmin', height: '16vmin', fontSize: '1rem'});
+            set({ top: '50vh' , left: '14.25vw', width: '29vmin', height: '29vmin', fontSize: '1.25rem'});
         }
     });
 

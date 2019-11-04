@@ -1,6 +1,5 @@
 .User {
     float: left;
-    padding: 10px;
     text-align: center;
     display: table;
     position: absolute;
@@ -33,23 +32,31 @@
 
 .div1 {
     float: left;
-    position: absolute;
-    width: 33vw;
+    width: 28.5vw;
     height: 100vh;
-    background-color: #2F1982;
-    box-shadow: 2px 0px 2px 0px #101010;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 4px 4px #00000060;
     z-index: -4;
-    clip-path: polygon(0 0, 0 100%, 90% 100%, 100% 80%, 90% 60%, 90% 40%, 80% 20%, 90% 0);
+}
+.nowtext{
+    float: left;
+    margin-left: 32px;
+    margin-top: 20px;
+    width: 10vw;
 }
 
 .div2 {
     float: left;
-    position: absolute;
-    width: 78vw;
+    width: 71.5vw;
     height: 100vh;
-    background-color: #1C0B4F;
+    background-color: #F2F2F2;
     z-index: -5;
-    clip-path: polygon(0 0, 0 100%, 95.8% 100%, 100% 80%, 95.8% 60%, 95.8% 40%, 91.6% 20%, 95.8% 0);
+}
+.nexttext{
+    float: left;
+    margin-left: 32px;
+    margin-top: 20px;
+    width: 11.8vw;
 }
 
 .div3 {
@@ -106,26 +113,65 @@
 .canvas{
     position: absolute ;
     top: 50vh;
-    left: 15vw;
+    left: 14.25vw;
     transform: translate(-50%,-50%);
 }
 .center_box{
     position: absolute;
-    top: 50vh;
-    left: 52vw;
-    width: 45vw;
-    height: 20vh;
+    top: 51.2vh;
+    left: 86.5vw;
+    width: 21vw;
+    height: 50vh;
     transform: translate(-50%,-50%);
-    padding: 2vh;
+    box-shadow: 0px 2px 4px 0px #0000003b;
+    margin: 2vh;
     border-radius: 1vw;
-    background-color: #000;
+    background-color: #ffffff;
+}
+
+.button_box{
+    position: absolute;
+    top: 86.6vh;
+    left: 86.5vw;
+    width: 21vw;
+    height: 15.2vh;
+    transform: translate(-50%,-50%);
+    box-shadow: 0px 2px 4px 0px #0000003b;
+    margin: 2vh;
+    border-radius: 1vw;
+    background-color: #ffffff;
+}
+
+.queuetext{
+    float: left;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12.1vw;    
+}
+.canceltext{
+    float: left;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 14vw;    
+}
+.quittext{
+    float: left;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8.5vw;    
 }
 
 .title{
     margin-top: 2vh;
     text-align: center;
     font-size: 0.7rem;
-    color: #ffffff;
+    color: #000000;
     font-weight: 700;
     z-index: 1;
 }
@@ -254,18 +300,18 @@ input::placeholder {
 
 .load-3{
     position: absolute ;
-    top: 32vh;
-    left: 15vw;
+    top: 27vh;
+    left: 14.25vw;
     transform: translate(-50%,-50%);
 }
 
 .line {
     display: inline-block;
-    margin: 0.15rem;
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 0.5rem;
-    background-color: rgb(164, 142, 243);
+    margin: 0.9vmin;
+    width: 3vmin;
+    height: 3vmin;
+    border-radius: 3vmin;
+    background-color:#2152FF;
 }
 
 .load-3 .line:nth-last-child(1) {animation: loadingC 1s .3s linear infinite;}
@@ -274,6 +320,6 @@ input::placeholder {
 
 @keyframes loadingC {
     0% {transform: translate(0,0);}
-    50% {transform: translate(0,0.5rem);}
+    50% {transform: translate(0,3vmin);}
     100% {transform: translate(0,0);}
 }

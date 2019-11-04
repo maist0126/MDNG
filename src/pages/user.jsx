@@ -5,6 +5,11 @@ import MyUser from './Myuser';
 import Message from './Message';
 import Like from './Like';
 import Sketch from "react-p5";
+import nowtext from "./img/NOW.png";
+import nexttext from "./img/NEXT.png";
+import queuetext from "./img/QUEUE.png";
+import canceltext from "./img/CANCEL.png";
+import quittext from "./img/QUIT.png";
 
 function getRandomInt(min, max) {
     min = Math.ceil(min);
@@ -466,7 +471,7 @@ class UserPage extends React.Component {
     }
 
     setup = (p5, parent) => {
-        p5.createCanvas(120, 120).parent(parent)
+        p5.createCanvas(124, 124).parent(parent)
     }
     
     draw = p5 => {
@@ -483,11 +488,11 @@ class UserPage extends React.Component {
                 // document.getElementById("user_blue_time").style.color = '#ffffff';
         
                 let diff = ((snapshot.val().time/60)*Math.PI*2*10).toFixed(2);
-                p5.background(47,25,130);
+                p5.background(255);
                 p5.fill(0,153,255);
                 p5.strokeWeight(1);
                 p5.stroke(0,153,255);
-                p5.arc(60, 60, 120, 120, -Math.PI*0.5, diff/10-Math.PI*0.5);
+                p5.arc(62, 62, 124, 124, -Math.PI*0.5, diff/10-Math.PI*0.5);
                 
             } else {
                 let red_indicator = snapshot.val().time * (-1);
@@ -498,11 +503,11 @@ class UserPage extends React.Component {
                 // document.getElementById("user_blue_time").style.color = '#ff0000';
         
                 let diff = ((red_indicator/60)*Math.PI*2*10).toFixed(2);
-                p5.background(47,25,130);
+                p5.background(255);
                 p5.fill(255,0,0);
                 p5.strokeWeight(1);
                 p5.stroke(255,0,0);
-                p5.arc(60, 60, 120, 120, Math.PI*1.5-diff/10, Math.PI*1.5);
+                p5.arc(62, 62, 124, 124, Math.PI*1.5-diff/10, Math.PI*1.5);
             }
         });
     }
@@ -512,8 +517,10 @@ class UserPage extends React.Component {
         return (
             <div className = "UserPage">
                 <div className = "div1">
+                    <img className = "nowtext" src= {nowtext}></img>
                 </div>
                 <div className = "div2">
+                    <img className = "nexttext" src= {nexttext}></img>
                 </div>
                 <div className = "div3">  
                 </div>
@@ -552,7 +559,7 @@ class UserPage extends React.Component {
                             회의 주제
                     </div> */}
                     <div className = "title">
-                        주제: {this.state.topic}
+                        {this.state.topic}
                     </div>
                     {/* <div className = "running_time">
                         남은시간 : {this.state.runtime}
@@ -562,18 +569,20 @@ class UserPage extends React.Component {
                         <span className="border"></span>
                     </div>
                 </div>
-                
-                <div className = "reserve_on" 
+                <div className = "button_box"
                 style = {{display: ((this.state.reserve_done) || (this.state.t_full) || (this.state.now)) ? 'none' : 'block'}}
                 onClick={this.reserve_on}>
+                    <img className = "queuetext" src= {queuetext}></img>
                 </div>
-                <div className = "reserve_off" 
+                <div className = "button_box"
                 style = {{display: ((!this.state.reserve_done) || (this.state.now)) ? 'none' : 'block'}} 
                 onClick={this.reserve_off}>
-                </div> 
-                <div className = "quit" 
+                    <img className = "canceltext" src= {canceltext}></img>
+                </div>
+                <div className = "button_box"
                 style = {{display: this.state.now ? 'block' : 'none'}}
                 onClick={this.quit}>
+                    <img className = "quittext" src= {quittext}></img>
                 </div>
                 <div className = "subtract" 
                 style = {{display: this.state.now ? 'none' : 'block'}}
