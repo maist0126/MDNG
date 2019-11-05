@@ -584,6 +584,8 @@ class UserPage extends React.Component {
                 onClick={this.quit}>
                     <img className = "quittext" src= {quittext}></img>
                 </div>
+                <div className = "graph_box">
+                </div>
                 <div className = "subtract" 
                 style = {{display: this.state.now ? 'none' : 'block'}}
                 onClick={this.subtract}>

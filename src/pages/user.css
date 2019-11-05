@@ -11,12 +11,6 @@
     
 }
 
-.Userbox {
-    /* top: 20vh;
-    left: 80vw; */
-    transform: translate(20vh, 80vw);
-}
-
 .User_name {
     display: table-cell;
     vertical-align: middle;
@@ -112,7 +106,7 @@
 }
 .canvas{
     position: absolute ;
-    top: 50vh;
+    top: 51vh;
     left: 14.25vw;
     transform: translate(-50%,-50%);
 }
@@ -135,6 +129,19 @@
     left: 86.5vw;
     width: 21vw;
     height: 15.2vh;
+    transform: translate(-50%,-50%);
+    box-shadow: 0px 2px 4px 0px #0000003b;
+    margin: 2vh;
+    border-radius: 1vw;
+    background-color: #ffffff;
+}
+
+.graph_box{
+    position: absolute;
+    top: 14.4vh;
+    left: 86.5vw;
+    width: 21vw;
+    height: 18.1vh;
     transform: translate(-50%,-50%);
     box-shadow: 0px 2px 4px 0px #0000003b;
     margin: 2vh;

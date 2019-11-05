@@ -30,9 +30,9 @@ function MyUser(propps) {
        }))
     useEffect(() => {  
         if (propps.state === 0){
-            set({ top: `${getRandomInt(50, 90)}vh` , left: `${getRandomInt(35, 75)}vw`});
+            set({ top: `${getRandomInt(65, 90)}vh` , left: `${getRandomInt(35, 65)}vw`, width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 1){
-            set({ top: `${getRandomInt(50, 90)}vh` , left: `${getRandomInt(35, 75)}vw`});
+            set({ top: `${getRandomInt(65, 90)}vh` , left: `${getRandomInt(35, 65)}vw`, width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 2){
             set({ top: '20vh' , left: '65vw', width: '24vmin', height: '24vmin', fontSize: '1rem'});
         } else if (propps.state === 3){
