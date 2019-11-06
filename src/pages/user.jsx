@@ -48,7 +48,8 @@ class UserPage extends React.Component {
                 time: 0,
                 penalty: 0,
                 state: 0,
-                radius: 0
+                radius: 0,
+                graph: 0
             }],
             my_id: getQueryStringObject().id,
             reserve_done: false,
@@ -66,13 +67,13 @@ class UserPage extends React.Component {
         }
     }
     componentWillMount() {
-        // firelistener("mst_time", snapshot => {
-        //     let time = 3600 - snapshot.val().time;
-        //     let minutes = Math.floor((time % (60 * 60)) / 60);
-        //     let seconds = Math.floor(time % 60);
-        //     let m = minutes + ":" + seconds ;
-        //     this.setState({ runtime: m });
-        // });
+        firelistener("mst_time","value", snapshot => {
+            let time = 3600 - snapshot.val().time;
+            let minutes = Math.floor((time % (60 * 60)) / 60);
+            let seconds = Math.floor(time % 60);
+            let m = minutes + "m " + seconds + "s" ;
+            this.setState({ runtime: m });
+        });
         firelistener("topic","value", snapshot => {
             this.setState({ topic: snapshot.val() });
         });
@@ -90,10 +91,11 @@ class UserPage extends React.Component {
         });
         fire.database().ref("data").once("value").then(snapshot => {
             let userTable = []
-            let speech_mean = 0;
+            let worst = [];
+            // sort by value
             let aa = 0;
             for (let key in snapshot.val()){
-                speech_mean = speech_mean + snapshot.val()[key].time;
+                worst.push({id: snapshot.val()[key].id, value: snapshot.val()[key].time});
                 userTable.push({
                     key: Object.keys(snapshot.val())[aa],
                     id: snapshot.val()[key].id,
@@ -106,18 +108,15 @@ class UserPage extends React.Component {
                 });
                 aa ++;
             }
-            speech_mean = (speech_mean/userTable.length).toFixed(2);
-            let high_mean = speech_mean*2;
-            let low_mean = speech_mean*0.5;
+            worst.sort(function (a, b) {
+                if(a.hasOwnProperty('value')){
+                    return a.value - b.value;
+                }
+            });
             for (let i = 0; i<userTable.length; i++){
-                if (userTable[i].time > high_mean){
-                    if(userTable[i].time !== 0){
-                        userTable[i].radius = 5;
-                    }
-                } else if (userTable[i].time < low_mean){
-                    if(userTable[i].time !== 0){
-                        userTable[i].radius = 3;
-                    }
+                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                if (userTable[i].id === worst[0].id){
+                    userTable[i].radius = 3;
                 }
             }
             this.setState({ users: userTable });
@@ -135,22 +134,19 @@ class UserPage extends React.Component {
                 state: 0,
                 radius: 4
             });
-            let speech_mean = 0;
+            let worst = [];
             for (let key in userTable){
-                speech_mean = speech_mean + userTable[key].time;
+                worst.push({id: userTable[key].id, value: userTable[key].time});
             }
-            speech_mean = (speech_mean/userTable.length).toFixed(2);
-            let high_mean = speech_mean*2;
-            let low_mean = speech_mean*0.5;
-            for (let key in userTable){
-                if (userTable[key].time > high_mean){
-                    if(userTable[key].time !== 0){
-                        userTable[key].radius = 5;
-                    }
-                } else if (userTable[key].time < low_mean){
-                    if(userTable[key].time !== 0){
-                        userTable[key].radius = 3;
-                    }
+            worst.sort(function (a, b) {
+                if(a.hasOwnProperty('value')){
+                    return a.value - b.value;
+                }
+            });
+            for (let i = 0; i<userTable.length; i++){
+                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                if (userTable[i].id === worst[0].id){
+                    userTable[i].radius = 3;
                 }
             }
             this.setState({ users: userTable });
@@ -168,22 +164,19 @@ class UserPage extends React.Component {
                 state: 0,
                 radius: 4
             });
-            let speech_mean = 0;
+            let worst = [];
             for (let key in userTable){
-                speech_mean = speech_mean + userTable[key].time;
+                worst.push({id: userTable[key].id, value: userTable[key].time});
             }
-            speech_mean = (speech_mean/userTable.length).toFixed(2);
-            let high_mean = speech_mean*2;
-            let low_mean = speech_mean*0.5;
-            for (let key in userTable){
-                if (userTable[key].time > high_mean){
-                    if(userTable[key].time !== 0){
-                        userTable[key].radius = 5;
-                    }
-                } else if (userTable[key].time < low_mean){
-                    if(userTable[key].time !== 0){
-                        userTable[key].radius = 3;
-                    }
+            worst.sort(function (a, b) {
+                if(a.hasOwnProperty('value')){
+                    return a.value - b.value;
+                }
+            });
+            for (let i = 0; i<userTable.length; i++){
+                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                if (userTable[i].id === worst[0].id){
+                    userTable[i].radius = 3;
                 }
             }
             this.setState({ users: userTable });
@@ -471,7 +464,7 @@ class UserPage extends React.Component {
     }
 
     setup = (p5, parent) => {
-        p5.createCanvas(124, 124).parent(parent)
+        p5.createCanvas(28.5*window.innerWidth/100, 28.5*window.innerWidth/100).parent(parent)
     }
     
     draw = p5 => {
@@ -489,10 +482,9 @@ class UserPage extends React.Component {
         
                 let diff = ((snapshot.val().time/60)*Math.PI*2*10).toFixed(2);
                 p5.background(255);
-                p5.fill(0,153,255);
-                p5.strokeWeight(1);
+                p5.strokeWeight(3*window.innerHeight/100);
                 p5.stroke(0,153,255);
-                p5.arc(62, 62, 124, 124, -Math.PI*0.5, diff/10-Math.PI*0.5);
+                p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, -Math.PI*0.5, diff/10-Math.PI*0.5);
                 
             } else {
                 let red_indicator = snapshot.val().time * (-1);
@@ -504,10 +496,9 @@ class UserPage extends React.Component {
         
                 let diff = ((red_indicator/60)*Math.PI*2*10).toFixed(2);
                 p5.background(255);
-                p5.fill(255,0,0);
-                p5.strokeWeight(1);
+                p5.strokeWeight(3*window.innerHeight/100);
                 p5.stroke(255,0,0);
-                p5.arc(62, 62, 124, 124, Math.PI*1.5-diff/10, Math.PI*1.5);
+                p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, Math.PI*1.5-diff/10, Math.PI*1.5);
             }
         });
     }
@@ -522,8 +513,6 @@ class UserPage extends React.Component {
                 <div className = "div2">
                     <img className = "nexttext" src= {nexttext}></img>
                 </div>
-                <div className = "div3">  
-                </div>
                 <div className="load-3" style = {{display: this.state.speech_status ? 'block' : 'none'}}>
                     <div className="line"></div>
                     <div className="line"></div>
@@ -536,18 +525,20 @@ class UserPage extends React.Component {
                     if (value.name === getQueryStringObject().name){
                         return <MyUser 
                         key={index} 
+                        id={value.id}
                         state={value.state}
                         name="ME" 
-                        top="20vh" 
-                        left="85vw"
+                        top={`${value.id%2*(-22)+85}vh`} 
+                        left={`${value.id*8+37}vw`}
                         radius={value.radius}></MyUser>
                     } else {
                         return <MyUser 
                         key={index} 
+                        id={value.id}
                         state={value.state}
                         name={value.name} 
-                        top={`${getRandomInt(50, 90)}vh`} 
-                        left={`${getRandomInt(85, 95)}vw`}
+                        top={`${value.id%2*(-22)+85}vh`} 
+                        left={`${value.id*8+37}vw`}
                         radius={value.radius}></MyUser>
                     }
                 })}
@@ -555,19 +546,19 @@ class UserPage extends React.Component {
                     {this.state.add_status[this.state.add_status.length-1]}
                 </div>
                 <div className = "center_box">
-                    {/* <div className = "heading">
-                            회의 주제
-                    </div> */}
-                    <div className = "title">
-                        {this.state.topic}
+                    <div className = "running_time">
+                        Time left : {this.state.runtime}
                     </div>
-                    {/* <div className = "running_time">
-                        남은시간 : {this.state.runtime}
-                    </div> */}
-                    <div className="memo">
+                    <div className="memo2">
+                        <div className = "title">
+                            {this.state.topic}
+                        </div>
+                        <textarea placeholder="Click to take a note."/>
+                    </div>
+                    {/* <div className="memo">
                         <input type="text" id="inp" placeholder="메모를 입력하세요."/>
                         <span className="border"></span>
-                    </div>
+                    </div> */}
                 </div>
                 <div className = "button_box"
                 style = {{display: ((this.state.reserve_done) || (this.state.t_full) || (this.state.now)) ? 'none' : 'block'}}
@@ -585,6 +576,21 @@ class UserPage extends React.Component {
                     <img className = "quittext" src= {quittext}></img>
                 </div>
                 <div className = "graph_box">
+                    <div className="graph_wrapper">
+                        {userTable.map((value, index) => {
+                            if (value.name === getQueryStringObject().name){
+                                return <div className="graph_unit">
+                                            <div className="graph" style={{height: `${value.graph*10}vh`}}></div>
+                                            <div className="g_name">ME</div>
+                                        </div>
+                            } else {
+                                return <div className="graph_unit">
+                                <div className="graph" style={{backgroundColor: "#d9d9d9", height: `${value.graph*10}vh`}}></div>
+                                <div className="g_name"></div>
+                            </div>
+                            }
+                        })}
+                    </div>
                 </div>
                 <div className = "subtract" 
                 style = {{display: this.state.now ? 'none' : 'block'}}
