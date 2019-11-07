@@ -11,6 +11,9 @@ import queuetext from "./img/QUEUE.png";
 import canceltext from "./img/CANCEL.png";
 import quittext from "./img/QUIT.png";
 
+import clap from './img/clap.png';
+import ok from './img/ok.png';
+
 function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -57,6 +60,7 @@ class UserPage extends React.Component {
             t_full: false,
             now: false,
             reservers: [],
+            reservers_status: false,
             runtime: undefined,
             clock_status: false,
             add_status: [],
@@ -211,7 +215,8 @@ class UserPage extends React.Component {
                 userTable[reservers_id[0]].state = 5;
                 this.setState({
                     full: false,
-                    t_full: false
+                    t_full: false,
+                    reservers_status: true
                 });
                 if (reservers_id[0] === this.state.my_id){
                     this.setState({
@@ -238,7 +243,12 @@ class UserPage extends React.Component {
                         }
                     }
                 }
-            }  
+            } else{
+                this.setState({
+                    reservers_status: false
+                });
+                
+            }
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
@@ -269,7 +279,8 @@ class UserPage extends React.Component {
             }
             this.setState({ 
                 users: userTable,
-                reservers: reservers_id  });
+                reservers: reservers_id,
+                reservers_status: true });
         });
 
         fire.database().ref("order").on("child_removed", snapshot => {
@@ -293,7 +304,8 @@ class UserPage extends React.Component {
                 userTable[reservers_id[0]].state = 5;
                 this.setState({
                     full: false,
-                    t_full: false
+                    t_full: false,
+                    reservers_status: true
                 });
                 if (reservers_id[0] === this.state.my_id){
                     this.setState({
@@ -320,7 +332,12 @@ class UserPage extends React.Component {
                         }
                     }
                 }
-            }  
+            }  else{
+                this.setState({
+                    reservers_status: false
+                });
+                
+            }
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id  });
@@ -328,7 +345,7 @@ class UserPage extends React.Component {
         fire.database().ref("add").on('child_added', snapshot => {
             if(this.state.start_status !== 0){
                 let likes = [...this.state.add_status];
-                likes.push(<Like key = {getRandomInt(0, 1000)}></Like>);
+                likes.push(<Like key = {`${getRandomInt(0, 1000)}`}></Like>);
                 this.setState({
                     add_status: likes
                 });
@@ -527,7 +544,7 @@ class UserPage extends React.Component {
                         key={index} 
                         id={value.id}
                         state={value.state}
-                        name="ME" 
+                        name={"ME"} 
                         top={`${value.id%2*(-22)+85}vh`} 
                         left={`${value.id*8+37}vw`}
                         radius={value.radius}></MyUser>
@@ -536,7 +553,7 @@ class UserPage extends React.Component {
                         key={index} 
                         id={value.id}
                         state={value.state}
-                        name={value.name} 
+                        name={" "} 
                         top={`${value.id%2*(-22)+85}vh`} 
                         left={`${value.id*8+37}vw`}
                         radius={value.radius}></MyUser>
@@ -579,12 +596,12 @@ class UserPage extends React.Component {
                     <div className="graph_wrapper">
                         {userTable.map((value, index) => {
                             if (value.name === getQueryStringObject().name){
-                                return <div className="graph_unit">
+                                return <div className="graph_unit" key={index} >
                                             <div className="graph" style={{height: `${value.graph*10}vh`}}></div>
                                             <div className="g_name">ME</div>
                                         </div>
                             } else {
-                                return <div className="graph_unit">
+                                return <div className="graph_unit" key={index} >
                                 <div className="graph" style={{backgroundColor: "#d9d9d9", height: `${value.graph*10}vh`}}></div>
                                 <div className="g_name"></div>
                             </div>
@@ -592,16 +609,28 @@ class UserPage extends React.Component {
                         })}
                     </div>
                 </div>
+                <img src = {ok} className = "ok_button_1" style = {{display: ((this.state.now) && (this.state.sub_status > 0)) ? 'block' : 'none'}} alt ="ok" />
+                <img src = {ok} className = "ok_button_2" style = {{display: ((this.state.now) && (this.state.sub_status > 1)) ? 'block' : 'none'}} alt ="ok" />
+                <img src = {ok} className = "ok_button_3" style = {{display: ((this.state.now) && (this.state.sub_status > 2)) ? 'block' : 'none'}} alt ="ok" />
+
+                <div className = "subtract_" 
+                style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}}>
+                </div>
+                <img src = {ok} className = "ok_button" style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}} alt ="ok" />
                 <div className = "subtract" 
-                style = {{display: this.state.now ? 'none' : 'block'}}
+                style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}}
                 onClick={this.subtract}>
                 </div>
+                <div className = "add_" 
+                style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}}>
+                </div>
+                <img src = {clap} className = "clap_button" style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}} alt ="clap" />
                 <div className = "add" 
-                style = {{display: this.state.now ? 'none' : 'block'}}
+                style = {{display: ((this.state.now) || (!this.state.reservers_status)) ? 'none' : 'block'}}
                 onClick={this.add}>
                 </div>
-                <Message text= {"청자들이 충분히 이해한 것 같습니다."} state={this.state.sub_status} top={"-15%"}/>
-                <Message text= {"화자에게 전달하였습니다."} state={this.state.sub_clicked} top={"-15%"}/>
+                <Message text= {"Successfully delivered to the speaker."} state={this.state.sub_clicked} top={"-15%"}/>
+
             </div>
         );
     }

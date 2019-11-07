@@ -11,7 +11,7 @@ function getRandomInt(min, max) {
 function Like(propps) {
     const items = []
     for (let i = 0; i < 10; i ++) {
-        items.push({left: `${getRandomInt(0, 100)}vw`, key: propps.key})
+        items.push({left: `${getRandomInt(0, 10)*10}vw`, key: propps.key})
     }
     return (
         <Trail 

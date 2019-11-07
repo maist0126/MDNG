@@ -12,10 +12,6 @@ function Message(propps) {
     useEffect(() => {  
         if (propps.state === 0){
             set({ top: "-15%",  opacity: 0});
-        } else if (propps.state === 1){
-            set({ top: '15%', opacity: 1});
-        } else if (propps.state === 2){
-            set({ top: '15%',  opacity: 1});
         } else if (propps.state === 3){
             set({ top: '15%',  opacity: 1});
         }
@@ -29,7 +25,7 @@ function Message(propps) {
                 <div className = "m_header"> 
                     <img src = {ok} className = "ok" width = "20px" alt ="ok" />
                     <div className = "m_title">
-                        Rally
+                        Lewis
                     </div>
                     <div className = "m_now">
                         now
