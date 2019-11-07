@@ -193,7 +193,6 @@ class UserPage extends React.Component {
             }
             userTable[this.state.my_id].state = 1;
             let reservers_id = [];
-            let i = 0;
             for (let key in snapshot.val()) {
                 reservers_id.push(snapshot.val()[key].id);
             }

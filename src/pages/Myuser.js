@@ -6,6 +6,11 @@ import user1 from "./img/user1.jpg";
 import user2 from "./img/user2.jpg";
 import user3 from "./img/user3.jpg";
 import user4 from "./img/user4.jpg";
+import user0_ from "./img/user0_.jpg";
+import user1_ from "./img/user1_.jpg";
+import user2_ from "./img/user2_.jpg";
+import user3_ from "./img/user3_.jpg";
+import user4_ from "./img/user4_.jpg";
 
 function getRandomColor() {
     var o_letters = '89ABCDEF';
@@ -62,8 +67,7 @@ function MyUser(propps) {
                         {/* <div className="User_name"> 
                             {propps.name}
                         </div> */}
-                        <img className = "user_png" src= {user0}></img>
-                        <div className = "User_name">{propps.name}</div>
+                        <img className = "user_png" src= {user0_}></img>
                 </animated.div>
             )
         } else if (propps.id == 1){
@@ -72,8 +76,7 @@ function MyUser(propps) {
                     className="User"
                     state={propps.state}
                     style={props}>
-                        <img className = "user_png" src= {user1}></img>
-                        <div className = "User_name">{propps.name}</div>
+                        <img className = "user_png" src= {user1_}></img>
                 </animated.div>
             )
         } else if (propps.id == 2){
@@ -82,8 +85,7 @@ function MyUser(propps) {
                     className="User"
                     state={propps.state}
                     style={props}>
-                        <img className = "user_png" src= {user2}></img>
-                        <div className = "User_name">{propps.name}</div>
+                        <img className = "user_png" src= {user2_}></img>
                 </animated.div>
             )
         } else if (propps.id == 3){
@@ -92,8 +94,7 @@ function MyUser(propps) {
                     className="User"
                     state={propps.state}
                     style={props}>
-                        <img className = "user_png" src= {user3}></img>
-                        <div className = "User_name">{propps.name}</div>
+                        <img className = "user_png" src= {user3_}></img>
                 </animated.div>
             )
         } else{
@@ -102,8 +103,7 @@ function MyUser(propps) {
                     className="User"
                     state={propps.state}
                     style={props}>
-                        <img className = "user_png" src= {user4}></img>
-                        <div className = "User_name">{propps.name}</div>
+                        <img className = "user_png" src= {user4_}></img>
                 </animated.div>
             )
         }
