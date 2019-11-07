@@ -79,8 +79,10 @@ class Form extends React.Component {
             return (
                 <div>
                     <form onSubmit={e => this.create(e)}>
+                        <div className="name_label">
+                            Name: 
+                        </div>
                         <label className="label">
-                            이름: 
                             <input
                                 name='name'
                                 value={this.state.name}
@@ -100,7 +102,7 @@ class Form extends React.Component {
             return (
                 <div>
                     <Link className="go" to={`./user?id=${this.state.id}&name=${this.state.name}`}>
-                        {this.state.name}, 채팅방 입장하기
+                        {this.state.name}, Let's go to the meeting!
                     </Link>
                 </div>
             );
@@ -112,7 +114,7 @@ class Form extends React.Component {
 const MainPage = () => {
     return (
         <div className = "MainPage">
-            <h1>MDNG's project</h1>
+            <h1>Lewis</h1>
             <Form></Form>
         </div>  
     );
