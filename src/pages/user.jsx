@@ -71,9 +71,7 @@ class UserPage extends React.Component {
             rem_time: 0
         }
     }
-    componentDidUpdate() {
-        console.log(this.state);
-    }
+    
     componentDidMount() {
         firelistener("mst_time","value", snapshot => {
             let time = 3600 - snapshot.val().time;
