@@ -67,10 +67,14 @@ class UserPage extends React.Component {
             sub_status: 0,
             start_status: 0,
             speech_status: false,
-            sub_clicked: 0
+            sub_clicked: 0,
+            rem_time: 0
         }
     }
-    componentWillMount() {
+    componentDidUpdate() {
+        console.log(this.state);
+    }
+    componentDidMount() {
         firelistener("mst_time","value", snapshot => {
             let time = 3600 - snapshot.val().time;
             let minutes = Math.floor((time % (60 * 60)) / 60);
@@ -385,6 +389,11 @@ class UserPage extends React.Component {
                 }
             }
         });
+        fire.database().ref().child('rem_time').on('value', snapshot => {
+            this.setState({
+                rem_time: snapshot.val().time
+            });
+        });
     }
 
     reserve_on = () => {
@@ -484,39 +493,38 @@ class UserPage extends React.Component {
     }
     
     draw = p5 => {
-        fire.database().ref().child('rem_time').on('value', snapshot => {
-            if (snapshot.val().time > 0){
-                let minutes = Math.floor((snapshot.val().time % (60 * 60)) / 60);
-                let seconds = Math.floor(snapshot.val().time % 60);
-                let m = minutes + ":" + seconds ; 
-                // if (seconds < 15){
-                //     document.getElementById("user_blue_time").innerHTML = m;   
-                // } else{
-                //     document.getElementById("user_blue_time").innerHTML = ""; 
-                // }
-                // document.getElementById("user_blue_time").style.color = '#ffffff';
-        
-                let diff = ((snapshot.val().time/60)*Math.PI*2*10).toFixed(2);
-                p5.background(255);
-                p5.strokeWeight(3*window.innerHeight/100);
-                p5.stroke(0,153,255);
-                p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, -Math.PI*0.5, diff/10-Math.PI*0.5);
-                
-            } else {
-                let red_indicator = snapshot.val().time * (-1);
-                let minutes = Math.floor((red_indicator % (60 * 60)) / 60);
-                let seconds = Math.floor(red_indicator % 60);
-                let m = "- " + minutes + ":" + seconds; 
-                // document.getElementById("user_blue_time").innerHTML = m;
-                // document.getElementById("user_blue_time").style.color = '#ff0000';
-        
-                let diff = ((red_indicator/60)*Math.PI*2*10).toFixed(2);
-                p5.background(255);
-                p5.strokeWeight(3*window.innerHeight/100);
-                p5.stroke(255,0,0);
-                p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, Math.PI*1.5-diff/10, Math.PI*1.5);
-            }
-        });
+        let time = this.state.rem_time;
+        if (time > 0){
+            let minutes = Math.floor((time % (60 * 60)) / 60);
+            let seconds = Math.floor(time % 60);
+            let m = minutes + ":" + seconds ; 
+            // if (seconds < 15){
+            //     document.getElementById("user_blue_time").innerHTML = m;   
+            // } else{
+            //     document.getElementById("user_blue_time").innerHTML = ""; 
+            // }
+            // document.getElementById("user_blue_time").style.color = '#ffffff';
+    
+            let diff = ((time/60)*Math.PI*2*10).toFixed(2);
+            p5.background(255);
+            p5.strokeWeight(3*window.innerHeight/100);
+            p5.stroke(0,153,255);
+            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 50*window.innerHeight/100, 50*window.innerHeight/100, -Math.PI*0.5, diff/10-Math.PI*0.5);
+            
+        } else {
+            let red_indicator = time * (-1);
+            let minutes = Math.floor((red_indicator % (60 * 60)) / 60);
+            let seconds = Math.floor(red_indicator % 60);
+            let m = "- " + minutes + ":" + seconds; 
+            // document.getElementById("user_blue_time").innerHTML = m;
+            // document.getElementById("user_blue_time").style.color = '#ff0000';
+    
+            let diff = ((red_indicator/60)*Math.PI*2*10).toFixed(2);
+            p5.background(255);
+            p5.strokeWeight(3*window.innerHeight/100);
+            p5.stroke(255,0,0);
+            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 50*window.innerHeight/100, 50*window.innerHeight/100, Math.PI*1.5-diff/10, Math.PI*1.5);
+        }
     }
 
     render(){

@@ -18,7 +18,7 @@ function Like(propps) {
         items={items} 
         keys={item => item.key}
         from={{ opacity: 1, top: "100vh", trasform: "translate(-50%, -50%)" }} 
-        to={{ opacity: 0, top: "10vh", trasform: "translate(-50%, -50%)"  }}>
+        to={{ opacity: 0, top: "0vh", trasform: "translate(-50%, -50%)"  }}>
             {item => props => <img src = {clap} style = {{
                 opacity: props.opacity,
                 top: props.top,
