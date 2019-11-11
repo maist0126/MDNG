@@ -43,6 +43,13 @@
   </head>
   <body>
     <script src="https://www.gstatic.com/firebasejs/5.11.0/firebase.js"></script>
+    <script>
+      const nosleep = new NoSleep();
+      document.addEventListener('click', function enableNoSleep(){
+        document.removeEventListener('click', enableNoSleep, false);
+        nosleep.enable();
+      }, false);
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
