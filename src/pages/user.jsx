@@ -507,7 +507,7 @@ class UserPage extends React.Component {
             p5.background(255);
             p5.strokeWeight(3*window.innerHeight/100);
             p5.stroke(0,153,255);
-            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 50*window.innerHeight/100, 50*window.innerHeight/100, -Math.PI*0.5, diff/10-Math.PI*0.5);
+            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, -Math.PI*0.5, diff/10-Math.PI*0.5);
             
         } else {
             let red_indicator = time * (-1);
@@ -521,7 +521,7 @@ class UserPage extends React.Component {
             p5.background(255);
             p5.strokeWeight(3*window.innerHeight/100);
             p5.stroke(255,0,0);
-            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 50*window.innerHeight/100, 50*window.innerHeight/100, Math.PI*1.5-diff/10, Math.PI*1.5);
+            p5.arc(14.25*window.innerWidth/100, 14.25*window.innerWidth/100, 40*window.innerHeight/100, 40*window.innerHeight/100, Math.PI*1.5-diff/10, Math.PI*1.5);
         }
     }
 
