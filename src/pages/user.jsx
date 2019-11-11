@@ -120,7 +120,11 @@ class UserPage extends React.Component {
                 }
             });
             for (let i = 0; i<userTable.length; i++){
-                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                if (worst[worst.length-1].value == 0){
+                    userTable[i].graph = 0;
+                } else {
+                    userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                }
                 if (userTable[i].id === worst[0].id){
                     userTable[i].radius = 3;
                 }
@@ -150,7 +154,11 @@ class UserPage extends React.Component {
                 }
             });
             for (let i = 0; i<userTable.length; i++){
-                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                if (worst[worst.length-1].value == 0){
+                    userTable[i].graph = 0;
+                } else {
+                    userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
+                }
                 if (userTable[i].id === worst[0].id){
                     userTable[i].radius = 3;
                 }
