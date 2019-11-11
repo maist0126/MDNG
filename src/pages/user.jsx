@@ -128,36 +128,6 @@ class UserPage extends React.Component {
             this.setState({ users: userTable });
         });
         
-        fire.database().ref("data").on("child_added", snapshot => {
-            let userTable = [...this.state.users];
-            userTable.push({
-                key: snapshot.key,
-                id: snapshot.val().id,
-                name: snapshot.val().name,
-                color: snapshot.val().color,
-                time: snapshot.val().time,
-                penalty: snapshot.val().penalty,
-                state: 0,
-                radius: 4
-            });
-            let worst = [];
-            for (let key in userTable){
-                worst.push({id: userTable[key].id, value: userTable[key].time});
-            }
-            worst.sort(function (a, b) {
-                if(a.hasOwnProperty('value')){
-                    return a.value - b.value;
-                }
-            });
-            for (let i = 0; i<userTable.length; i++){
-                userTable[i].graph = (userTable[i].time/worst[worst.length-1].value).toFixed(2);
-                if (userTable[i].id === worst[0].id){
-                    userTable[i].radius = 3;
-                }
-            }
-            this.setState({ users: userTable });
-        });
-
         fire.database().ref("data").on("child_changed", snapshot => {
             let userTable = [...this.state.users];
             userTable.splice(snapshot.val().id, 1, {
