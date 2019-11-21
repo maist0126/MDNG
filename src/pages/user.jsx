@@ -536,7 +536,7 @@ class UserPage extends React.Component {
                         key={index} 
                         id={value.id}
                         state={value.state}
-                        name={" "} 
+                        name={value.name} 
                         top={`${value.id%2*(-22)+85}vh`} 
                         left={`${value.id*8+37}vw`}
                         radius={value.radius}></MyUser>
