@@ -43,6 +43,13 @@
   </head>
   <body>
       <script src="https://www.gstatic.com/firebasejs/5.11.0/firebase.js"></script>
+      <script>
+        window.addEventListener("orientationchange", function() {
+            // Announce the new orientation number
+            location.reload();
+        }, false);
+        
+      </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
