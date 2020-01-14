@@ -256,13 +256,6 @@ class UserPage extends React.Component {
                     });
                 }
             }
-            if (reservers_id.length === 2){
-                fire.database().ref().child('start_status').once('value').then(snapshot => {
-                    if (snapshot.val().status === 1){
-                        fire.database().ref().child('start_status').set({ status: 2 });
-                    }
-                });
-            }
             this.setState({ 
                 users: userTable,
                 reservers: reservers_id,
@@ -297,19 +290,11 @@ class UserPage extends React.Component {
                     this.setState({
                         now: true
                     });
-                    if (reservers_id.length > 1){
-                        fire.database().ref().child('start_status').once('value').then(snapshot => {
-                            if (snapshot.val().status === 0){
-                                fire.database().ref().child('start_status').set({ status: 2 });
-                            }
-                        });
-                    } else if (reservers_id === 1){
-                        fire.database().ref().child('start_status').once('value').then(snapshot => {
-                            if (snapshot.val().status === 0){
-                                fire.database().ref().child('start_status').set({ status: 1 });
-                            }
-                        });
-                    }
+                    fire.database().ref().child('start_status').once('value').then(snapshot => {
+                        if (snapshot.val().status === 0){
+                            fire.database().ref().child('start_status').set({ status: 1 });
+                        }
+                    });
                 }
                 if(reservers_id.length > 1){
                     userTable[reservers_id[1]].state = 4;
