@@ -528,7 +528,6 @@ class UserPage extends React.Component {
                     <Sketch setup={this.setup} draw={this.draw} />
                 </div>
                 {userTable.map((value, index) => {
-                    console.log(value.id, value.top, value.left,value.color)
                     if (value.name === getQueryStringObject().name){
                         return <MyUser 
                         key={index} 
