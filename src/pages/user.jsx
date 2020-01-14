@@ -50,6 +50,8 @@ class UserPage extends React.Component {
                 color: "#000000",
                 time: 0,
                 penalty: 0,
+                top: 0,
+                left: 0,
                 state: 0,
                 radius: 0,
                 graph: 0
@@ -109,6 +111,8 @@ class UserPage extends React.Component {
                     color: snapshot.val()[key].color,
                     time: snapshot.val()[key].time,
                     penalty: snapshot.val()[key].penalty,
+                    top: snapshot.val()[key].top,
+                    left: snapshot.val()[key].left,
                     state: 0,
                     radius: 4
                 });
@@ -141,6 +145,8 @@ class UserPage extends React.Component {
                 color: snapshot.val().color,
                 time: snapshot.val().time,
                 penalty: snapshot.val().penalty,
+                top: snapshot.val().top,
+                left: snapshot.val().left,
                 state: 0,
                 radius: 4
             });
@@ -522,14 +528,16 @@ class UserPage extends React.Component {
                     <Sketch setup={this.setup} draw={this.draw} />
                 </div>
                 {userTable.map((value, index) => {
+                    console.log(value.id, value.top, value.left,value.color)
                     if (value.name === getQueryStringObject().name){
                         return <MyUser 
                         key={index} 
                         id={value.id}
                         state={value.state}
                         name={"ME"} 
-                        top={`${value.id%2*(-22)+85}vh`} 
-                        left={`${value.id*8+37}vw`}
+                        top={`${value.top}vh`} 
+                        left={`${value.left}vw`}
+                        color={value.color}
                         radius={value.radius}></MyUser>
                     } else {
                         return <MyUser 
@@ -537,8 +545,9 @@ class UserPage extends React.Component {
                         id={value.id}
                         state={value.state}
                         name={value.name} 
-                        top={`${value.id%2*(-22)+85}vh`} 
-                        left={`${value.id*8+37}vw`}
+                        top={`${value.top}vh`} 
+                        left={`${value.left}vw`}
+                        color={value.color}
                         radius={value.radius}></MyUser>
                     }
                 })}

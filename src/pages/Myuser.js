@@ -26,25 +26,25 @@ function MyUser(propps) {
     const [props, set] = useSpring(() => ({
         top: propps.top,
         left: propps.left,
-        backgroundColor: getRandomColor(),
+        backgroundColor: propps.color,
        }))
     useEffect(() => {  
         if (propps.state === 0){
-            set({ top: propps.top , left: propps.left, width: '20vmin', height: '20vmin', fontSize: '1rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+            set({ backgroundColor: propps.color, top: propps.top , left: propps.left, width: '20vmin', height: '20vmin', fontSize: '1rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
         } else if (propps.state === 1){
-            set({ top: propps.top , left: propps.left, width: '20vmin', height: '20vmin', fontSize: '1rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+            set({ backgroundColor: propps.color, top: propps.top , left: propps.left, width: '20vmin', height: '20vmin', fontSize: '1rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
         } else if (propps.state === 2){
-            set({ top: '29.6vh' , left: '64.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+            set({ backgroundColor: propps.color, top: '29.6vh' , left: '64.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
         } else if (propps.state === 3){
-            set({ top: '29.6vh' , left: '51.3vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+            set({ backgroundColor: propps.color, top: '29.6vh' , left: '51.3vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
         } else if (propps.state === 4){
             if (propps.radius === 3){
-                set({ top: '29.6vh' , left: '37.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 4px 30px 6px rgba(255, 0, 255, 0.9)"});
+                set({ backgroundColor: propps.color, top: '29.6vh' , left: '37.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 4px 30px 6px rgba(255, 0, 255, 0.9)"});
             } else{
-                set({ top: '29.6vh' , left: '37.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+                set({ backgroundColor: propps.color, top: '29.6vh' , left: '37.8vw', width: '24vmin', height: '24vmin', fontSize: '1.2rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
             }
         } else if (propps.state === 5){
-            set({ top: '50vh' , left: '14.25vw', width: '35vmin', height: '35vmin', fontSize: '1.75rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
+            set({ backgroundColor: propps.color, top: '50vh' , left: '14.25vw', width: '35vmin', height: '35vmin', fontSize: '1.75rem', boxShadow: "0px 2px 4px 2px rgba(0, 0, 0, 0.233)"});
         }
     });
     if (propps.name === "ME"){

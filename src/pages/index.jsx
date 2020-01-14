@@ -65,7 +65,9 @@ class Form extends React.Component {
                 name: this.state.name,
                 color: getRandomColor(),
                 time: 0,
-                penalty: 0
+                penalty: 0,
+                top: getRandomInt(50,90),
+                left: getRandomInt(35,75)
             });
             this.setState({
                 id: i,
